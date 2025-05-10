@@ -1,5 +1,5 @@
-# ThreeJS3DExtendedPeriodicTable
-A 3D extended periodic table rendered using Three.JS
+# IsotopicPeriodicTable
+An isotopic periodic table of elemental abundance on earth rendered using Three.JS
 
 Main file is HTML : 
 
