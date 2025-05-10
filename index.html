@@ -1384,7 +1384,6 @@ const orientationGizmo = new OrientationGizmo(camera);
                 elements[index].weightMesh = weightMesh;
             });
         }
-
         function flyToElement(index) {
             const elementCube = elements[index]?.cube; // Ensure the cube exists
 
@@ -1403,10 +1402,24 @@ const orientationGizmo = new OrientationGizmo(camera);
 
                 // Ensure the controls are updated to reflect the new target
                 controls.update();
-            } else {
-                console.error(`Element at index ${index} does not exist or is missing a cube.`);
+            } 
+
+	    else {
+
+                // Update camera position to face the element directly
+                camera.position.set(
+                    0,
+                    0,
+                    0 + 2 // Slight offset along Z for face-on view
+                );
+
+                // Update the camera controls' target to the cube's position
+                controls.target.set(0, 0, 0);
+
+                // Ensure the controls are updated to reflect the new target
+                controls.update();
             }
-        }
+
         
         // Adding cubes for each element with adjusted positioning for isotopes
         const positions = [
