@@ -7,6 +7,8 @@ Will require an HTML viewer, unless on a windows desktop which allows access via
 
 Click and move to rotate, right click and drag to move along the viewport.
 
+Color coded to reflect spectrometry absorptions / emissions when possible.
+
 Thanks to OpenAI for coding assistance, and ThreeViewportGizmo for the gizmo inspiration
 https://fennec-hub.github.io/three-viewport-gizmo/
 https://openai.com/
