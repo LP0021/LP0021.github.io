@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isotopic Periodic Table</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #overlayMenu {
+        position: fixed; /* Fixed to the screen for consistent placement */
+        top: 10px; /* Adjusted position */
+        left: 10px; /* Adjusted position */
+        max-height: 90vh; /* Constrain height to 90% of the viewport */
+        overflow-y: auto; /* Enable vertical scrolling for overflowing content */
+        width: 300px; /* Set a reasonable width for the menu */
+        background: rgba(0, 0, 0, 0.8); /* Slightly more transparent background for better aesthetics */
+        color: white; /* Text color remains white */
+        padding: 10px; /* Padding inside the menu */
+        border-radius: 8px; /* Slightly rounded corners for better aesthetics */
+        box-sizing: border-box; /* Include padding in the element's width and height */
+        z-index: 1000; /* Ensure it's above other elements */
+        }
+
+        #overlayMenu ul {
+            list-style: none;
+            padding: 0; /* Remove padding for cleaner appearance */
+        }
+
+        #overlayMenu li {
+            cursor: pointer; /* Pointer cursor for interactive elements */
+            margin: 5px 0; /* Space between list items */
+        }
+
+        #overlayMenu li ul {
+            display: none; /* Keep nested menus hidden by default */
+            list-style: none;
+            padding-left: 15px; /* Indent nested menus */
+        }
+
+        #overlayMenu li:hover ul {
+            display: block; /* Show nested menus on hover */
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
+</head>
+<body>
+    <div id="overlayMenu">
+        <button onclick="toggleExtendedPeriod()">Toggle Extended Period</button>
+        <ul>
+            <li>
+                <span onclick="toggleNext(this)">Hydrogen &#9662;</span>                
+                <ul style="display: none;">
+                    <li onclick="flyToElement(318)">Hydrogen-1</li>
+                    <li onclick="flyToElement(0)">Deuteurium-2</li>
+                    <li onclick="flyToElement(1)">Tritium-3</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Helium &#9662;</span>       
+                <ul style="display: none;">
+                    <li onclick="flyToElement(293)">Helium-3</li>
+                    <li onclick="flyToElement(294)">Helium-4</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Lithium &#9662;</span> 
+                <ul style="display: none;">
+                    <li onclick="flyToElement(2)">Lithium-6</li>
+                    <li onclick="flyToElement(3)">Lithium-7</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Beryllium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(12)">Beryllium-7</li>
+                    <li onclick="flyToElement(13)">Beryllium-9</li>
+                    <li onclick="flyToElement(14)">Beryllium-10</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Boron &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(220)">Boron-10</li>
+                    <li onclick="flyToElement(221)">Boron-11</li>
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Carbon &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(230)">Carbon-12</li>
+                    <li onclick="flyToElement(231)">Carbon-13</li>
+                    <li onclick="flyToElement(232)">Carbon-14</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Nitrogen &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(252)">Nitrogen-14</li>
+                    <li onclick="flyToElement(253)">Nitrogen-15</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Oxygen &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(261)">Oxygen-15</li>
+                    <li onclick="flyToElement(262)">Oxygen-16</li>
+                    <li onclick="flyToElement(263)">Oxygen-17</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Fluorine &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(285)">Fluorine-19</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Neon &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(295)">Neon-20</li>
+                    <li onclick="flyToElement(296)">Neon-21</li>
+                    <li onclick="flyToElement(297)">Neon-22</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Sodium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(4)">Sodium-22</li>
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Magnesium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(15)">Magnesium-24</li>
+                    <li onclick="flyToElement(16)">Magnesium-25</li>
+                    <li onclick="flyToElement(17)">Magnesium-26</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Aluminium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(222)">Aluminium-27</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Silicon &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(233)">Silicon-28</li>
+                    <li onclick="flyToElement(234)">Silicon-29</li>
+                    <li onclick="flyToElement(235)">Silicon-30</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Phosphorus &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(254)">Phosphorus-31</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Sulfur &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(264)">Sulfur-32</li>
+                    <li onclick="flyToElement(265)">Sulfur-33</li>
+                    <li onclick="flyToElement(266)">Sulfur-34</li>
+                    <li onclick="flyToElement(267)">Sulfur-36</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Chlorine &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(286)">Chlorine-35</li>
+                    <li onclick="flyToElement(287)">Chlorine-37</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Argon &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(298)">Argon-36</li>
+                    <li onclick="flyToElement(299)">Argon-38</li>
+                    <li onclick="flyToElement(300)">Argon-40</li>                    
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Potassium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(5)">Potassium-39</li>
+                    <li onclick="flyToElement(6)">Potassium-41</li>                 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Calcium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(18)">Calcium-40</li>
+                    <li onclick="flyToElement(19)">Calcium-41</li>    
+                    <li onclick="flyToElement(20)">Calcium-42</li>   
+                    <li onclick="flyToElement(21)">Calcium-44</li>   
+                    <li onclick="flyToElement(22)">Calcium-46</li>      
+                    <li onclick="flyToElement(23)">Calcium-48</li>                 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Scandium &#9662;</span>   
+                <ul style="display: none;">
+                    <li onclick="flyToElement(34)">Scandium-45</li>           
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Titanium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(118)">Titanium-45</li>  
+                    <li onclick="flyToElement(119)">Titanium-46</li>  
+                    <li onclick="flyToElement(120)">Titanium-47</li>  
+                    <li onclick="flyToElement(121)">Titanium-48</li>  
+                    <li onclick="flyToElement(122)">Titanium-49</li>  
+                    <li onclick="flyToElement(123)">Titanium-50</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Vanadium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(135)">Vanadium-50</li>  
+                    <li onclick="flyToElement(136)">Vanadium-51</li>  
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Chromium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(141)">Chromium-50</li>  
+                    <li onclick="flyToElement(142)">Chromium-52</li>  
+                    <li onclick="flyToElement(143)">Chromium-53</li>  
+                    <li onclick="flyToElement(144)">Chromium-54</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Manganese &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(157)">Manganese-55</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Iron &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(162)">Iron-56</li>  
+                    <li onclick="flyToElement(163)">Iron-57</li>  
+                    <li onclick="flyToElement(164)">Iron-58</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Cobalt &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(170)">Cobalt-59</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Nickel &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(175)">Nickel-58</li>  
+                    <li onclick="flyToElement(176)">Nickel-60</li> 
+                    <li onclick="flyToElement(177)">Nickel-61</li> 
+                    <li onclick="flyToElement(178)">Nickel-62</li> 
+                    <li onclick="flyToElement(179)">Nickel-64</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Copper &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(193)">Copper-63</li>  
+                    <li onclick="flyToElement(194)">Copper-65</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Zinc &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(199)">zinc-64</li>  
+                    <li onclick="flyToElement(200)">zinc-66</li> 
+                    <li onclick="flyToElement(201)">zinc-67</li>  
+                    <li onclick="flyToElement(202)">zinc-68</li>
+                    <li onclick="flyToElement(203)">zinc-70</li>     
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Gallium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(223)">Gallium-69</li>  
+                    <li onclick="flyToElement(224)">Gallium-71</li>   
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Germanium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(236)">Germanium-70</li>  
+                    <li onclick="flyToElement(237)">Germanium-72</li>
+                    <li onclick="flyToElement(238)">Germanium-73</li>   
+                    <li onclick="flyToElement(239)">Germanium-74</li>   
+                    <li onclick="flyToElement(240)">Germanium-76</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Arsenic &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(256)">Arsenic-75</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Selenium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(268)">Selenium-76</li>  
+                    <li onclick="flyToElement(269)">Selenium-77</li>  
+                    <li onclick="flyToElement(270)">Selenium-78</li>  
+                    <li onclick="flyToElement(271)">Selenium-80</li>  
+                    <li onclick="flyToElement(272)">Selenium-82</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Bromine &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(288)">Bromine-79</li>  
+                    <li onclick="flyToElement(289)">Bromine-81</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Krypton &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(301)">Krypton-78</li>  
+                    <li onclick="flyToElement(302)">Krypton-80</li>  
+                    <li onclick="flyToElement(303)">Krypton-82</li> 
+                    <li onclick="flyToElement(304)">Krypton-83</li>   
+                    <li onclick="flyToElement(305)">Krypton-84</li>   
+                    <li onclick="flyToElement(306)">Krypton-86</li>   
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Rubidium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(7)">Rubidium-85</li>  
+                    <li onclick="flyToElement(8)">Rubidium-87</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Strontium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(24)">Strontium-84</li>  
+                    <li onclick="flyToElement(25)">Strontium-85</li>  
+                    <li onclick="flyToElement(26)">Strontium-86</li>  
+                    <li onclick="flyToElement(27)">Strontium-87</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Yttrium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(35)">Yttrium-89</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Zirconium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(123)">Zirconium-90</li>  
+                    <li onclick="flyToElement(124)">Zirconium-91</li> 
+                    <li onclick="flyToElement(125)">Zirconium-92</li>
+                    <li onclick="flyToElement(126)">Zirconium-94</li>     
+                    <li onclick="flyToElement(127)">Zirconium-96</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Niobium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(137)">Niobium-93</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Molybdenum &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(145)">Molybdenum-92</li>  
+                    <li onclick="flyToElement(146)">Molybdenum-94</li>  
+                    <li onclick="flyToElement(147)">Molybdenum-95</li>  
+                    <li onclick="flyToElement(148)">Molybdenum-96</li>  
+                    <li onclick="flyToElement(149)">Molybdenum-97</li>  
+                    <li onclick="flyToElement(150)">Molybdenum-98</li>  
+                    <li onclick="flyToElement(151)">Molybdenum-100</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Technetium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(158)">Technetium-98</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Ruthenium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(165)">Ruthenium-102</li> 
+                    <li onclick="flyToElement(166)">Ruthenium-104</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Palladium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(180)">Palladium-102</li> 
+                    <li onclick="flyToElement(181)">Palladium-104</li> 
+                    <li onclick="flyToElement(182)">Palladium-105</li>
+                    <li onclick="flyToElement(183)">Palladium-106</li>
+                    <li onclick="flyToElement(184)">Palladium-107</li>
+                    <li onclick="flyToElement(185)">Palladium-108</li>
+                    <li onclick="flyToElement(186)">Palladium-110</li>
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Silver &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(195)">Silver-196</li> 
+                    <li onclick="flyToElement(196)">Silver-197</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Cadmium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(204)">Cadmium-106</li> 
+                    <li onclick="flyToElement(205)">Cadmium-108</li> 
+                    <li onclick="flyToElement(206)">Cadmium-110</li> 
+                    <li onclick="flyToElement(207)">Cadmium-111</li> 
+                    <li onclick="flyToElement(208)">Cadmium-112</li> 
+                    <li onclick="flyToElement(209)">Cadmium-113</li> 
+                    <li onclick="flyToElement(210)">Cadmium-114</li> 
+                    <li onclick="flyToElement(211)">Cadmium-116</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Indium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(225)">Indium-113</li>  
+                    <li onclick="flyToElement(226)">Indium-115</li>   
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Tin &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(241)">Tin-112</li> 
+                    <li onclick="flyToElement(242)">Tin-114</li> 
+                    <li onclick="flyToElement(243)">Tin-115</li> 
+                    <li onclick="flyToElement(244)">Tin-116</li> 
+                    <li onclick="flyToElement(245)">Tin-117</li> 
+                    <li onclick="flyToElement(246)">Tin-118</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Antimony &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(256)">Antimony-123</li> 
+                    <li onclick="flyToElement(257)">Antimony-124</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Tellurium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(274)">Tellurium-120</li> 
+                    <li onclick="flyToElement(275)">Tellurium-122</li> 
+                    <li onclick="flyToElement(276)">Tellurium-123</li>
+                    <li onclick="flyToElement(277)">Tellurium-124</li> 
+                    <li onclick="flyToElement(278)">Tellurium-125</li> 
+                    <li onclick="flyToElement(279)">Tellurium-126</li> 
+                    <li onclick="flyToElement(280)">Tellurium-128</li> 
+                    <li onclick="flyToElement(281)">Tellurium-130</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Iodine &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(290)">Iodine-127</li> 
+                </ul>
+            </li>            
+            <li>
+                <span onclick="toggleNext(this)">Xenon &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(307)">Xenon-124</li> 
+                    <li onclick="flyToElement(308)">Xenon-126</li> 
+                    <li onclick="flyToElement(309)">Xenon-128</li> 
+                    <li onclick="flyToElement(310)">Xenon-130</li>
+                    <li onclick="flyToElement(311)">Xenon-131</li>  
+                    <li onclick="flyToElement(312)">Xenon-132</li>
+                    <li onclick="flyToElement(313)">Xenon-134</li> 
+                    <li onclick="flyToElement(314)">Xenon-136</li>  
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Cesium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(9)">Cesium-132</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Barium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(10)">Barium-138</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Hafnium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(128)">Hafnium-174</li> 
+                    <li onclick="flyToElement(129)">Hafnium-176</li> 
+                    <li onclick="flyToElement(130)">Hafnium-177</li> 
+                    <li onclick="flyToElement(131)">Hafnium-178</li> 
+                    <li onclick="flyToElement(132)">Hafnium-179</li> 
+                    <li onclick="flyToElement(133)">Hafnium-180</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Tantalum &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(138)">Tantalum-180</li> 
+                    <li onclick="flyToElement(139)">Tantalum-181</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Tungsten &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(152)">Tungsten-182</li> 
+                    <li onclick="flyToElement(153)">Tungsten-183</li> 
+                    <li onclick="flyToElement(154)">Tungsten-184</li> 
+                    <li onclick="flyToElement(155)">Tungsten-186</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Rhenium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(159)">Rhenium-185</li> 
+                    <li onclick="flyToElement(160)">Rhenium-187</li> 
+
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Osmium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(167)">Osmium-192</li> 
+                    <li onclick="flyToElement(168)">Osmium-190</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Iridium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(172)">Iridium-191</li> 
+                    <li onclick="flyToElement(173)">Iridium-193</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Platinum &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(186)">Platinum-190</li> 
+                    <li onclick="flyToElement(187)">Platinum-192</li> 
+                    <li onclick="flyToElement(188)">Platinum-194</li> 
+                    <li onclick="flyToElement(189)">Platinum-195</li> 
+                    <li onclick="flyToElement(190)">Platinum-196</li> 
+                    <li onclick="flyToElement(191)">Platinum-198</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Gold &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(197)">Gold-197</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Mercury &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(212)">Mercury-196</li> 
+                    <li onclick="flyToElement(213)">Mercury-198</li> 
+                    <li onclick="flyToElement(214)">Mercury-199</li> 
+                    <li onclick="flyToElement(215)">Mercury-200</li> 
+                    <li onclick="flyToElement(216)">Mercury-201</li> 
+                    <li onclick="flyToElement(217)">Mercury-202</li>
+                    <li onclick="flyToElement(218)">Mercury-204</li>
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Thallium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(227)">Thallium-203</li> 
+                    <li onclick="flyToElement(228)">Thallium-205</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Lead &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(247)">Lead-204</li> 
+                    <li onclick="flyToElement(248)">Lead-206</li> 
+                    <li onclick="flyToElement(249)">Lead-207</li> 
+                    <li onclick="flyToElement(250)">Lead-208</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Bismuth &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(258)">Bismuth-209</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Polonium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(282)">Polonium-209</li> 
+                    <li onclick="flyToElement(283)">Polonium-210</li> 
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Astatine &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(291)">Astatine-210</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Radon &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(316)">Radon-222</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Francium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(11)">Francium-223</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Radium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(28)">Radium-223</li> 
+                    <li onclick="flyToElement(29)">Radium-225</li> 
+                    <li onclick="flyToElement(30)">Radium-226</li> 
+                    <li onclick="flyToElement(31)">Radium-227</li> 
+                    <li onclick="flyToElement(32)">Radium-228</li> 
+
+                </ul>
+            </li>
+            <li>
+                <span onclick="toggleNext(this)">Rutherfordium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(134)">Rutherfordium-267</li> 
+
+                </ul>
+            </li>
+
+            <li>
+                <span onclick="toggleNext(this)">Dubnium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(140)">Dubnium-268</li> 
+
+                </ul>
+            </li>          
+
+            <li>
+                <span onclick="toggleNext(this)">Seaborgium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(156)">Seaborgium-271</li> 
+
+                </ul>
+            </li>     
+
+            <li>
+                <span onclick="toggleNext(this)">Bohrium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(161)">Bohrium-270</li> 
+
+                </ul>
+            </li>    
+
+
+            <li>
+                <span onclick="toggleNext(this)">Hassium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(169)">Hassium-277</li> 
+
+                </ul>
+            </li>   
+
+            <li>
+                <span onclick="toggleNext(this)">Meitnerium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(174)">Meitnerium-278</li> 
+
+                </ul>
+            </li>   
+
+            <li>
+                <span onclick="toggleNext(this)">Darmstadtium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(192)">Darmstadtium-281</li> 
+
+                </ul>
+            </li>   
+
+            <li>
+                <span onclick="toggleNext(this)">Roentgenium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(198)">Roentgenium-282</li> 
+
+                </ul>
+            </li>   
+
+            <li>
+                <span onclick="toggleNext(this)">Copernicium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(219)">Copernicium-285</li> 
+
+                </ul>
+            </li>   
+
+            <li>
+                <span onclick="toggleNext(this)">Cadmium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(204)">Cadmium-284</li> 
+
+                </ul>
+            </li>   
+
+            <li>
+                <span onclick="toggleNext(this)">Flerovium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(251)">Flerovium-289</li> 
+
+                </ul>
+            </li>   
+
+            <li>
+                <span onclick="toggleNext(this)">Ununpentium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(259)">Ununpentium-288</li> 
+                    <li onclick="flyToElement(260)">Ununpentium-289</li> 
+
+                </ul>
+            </li>   
+
+
+            <li>
+                <span onclick="toggleNext(this)">Livermorium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(284)">Livermorium-293</li> 
+
+
+                </ul>
+            </li>   
+
+            <li>
+                <span onclick="toggleNext(this)">Ununseptium &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(292)">Ununseptium-294</li> 
+
+
+                </ul>
+            </li>             
+
+            <li>
+                <span onclick="toggleNext(this)">Oganesson &#9662;</span>  
+                <ul style="display: none;">
+                    <li onclick="flyToElement(317)">Oganesson-294</li> 
+
+
+                </ul>
+            </li>             
+
+
+
+
+
+
+
+        </ul>
+
+        <script>
+            // Function to toggle the next sibling element
+            function toggleNext(element) {
+                const nextUl = element.nextElementSibling; // Get the next sibling <ul>
+                if (nextUl && nextUl.tagName === 'UL') { // Ensure it's a <ul>
+                    if (nextUl.style.display === 'none') {
+                        nextUl.style.display = 'block'; // Show the dropdown
+                    } else {
+                        nextUl.style.display = 'none'; // Hide the dropdown
+                    }
+                } else {
+                    console.error('No sibling <ul> found to toggle.');
+                }
+            }
+        </script>
+    </div>
+    <script>
+        // Element properties
+        const elements = [
+           // { atomicNumber: 1, symbol: 'H', name: 'Hydrogen-1', atomicWeight: '1.008', abundance: 99.98, color: 0xffffff, superscript: false, superscriptValue: '', symbolLength: 1, superscriptLength: 0 },
+            { atomicNumber: 1, symbol: 'H', name: 'Deuterium', atomicWeight: '2.014', abundance: 0.02, color: 0x00ffff, superscript: true, superscriptValue: '2', symbolLength: 1, superscriptLength: 1 },
+            { atomicNumber: 1, symbol: 'H', name: 'Tritium', atomicWeight: '3.016', abundance: 0.00000000001, color: 0x0000ff, superscript: true, superscriptValue: '3', symbolLength: 1, superscriptLength: 1 },
+            { atomicNumber: 3, symbol: 'Li', name: 'Lithium-6', atomicWeight: '6.015', abundance: 7.5, color: 0xffa07a, superscript: true, superscriptValue: '6', symbolLength: 2, superscriptLength: 1 },
+            { atomicNumber: 3, symbol: 'Li', name: 'Lithium-7', atomicWeight: '7.016', abundance: 92.5, color: 0xff6347, superscript: true, superscriptValue: '7', symbolLength: 2, superscriptLength: 1 },
+            { atomicNumber: 11, symbol: 'Na', name: 'Sodium', atomicWeight: '22.990', abundance: 100.0, color: 0xff4500, superscript: false, superscriptValue: '', symbolLength: 2, superscriptLength: 0 },
+            { atomicNumber: 19, symbol: 'K', name: 'Potassium-39', atomicWeight: '38.964', abundance: 93.258, color: 0x32cd32, superscript: true, superscriptValue: '39', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 19, symbol: 'K', name: 'Potassium-41', atomicWeight: '40.962', abundance: 6.730, color: 0x2e8b57, superscript: true, superscriptValue: '41', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 37, symbol: 'Rb', name: 'Rubidium-85', atomicWeight: '85.468', abundance: 72.2, color: 0x8b0000, superscript: true, superscriptValue: '85', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 37, symbol: 'Rb', name: 'Rubidium-87', atomicWeight: '86.909', abundance: 27.8, color: 0x8b0000, superscript: true, superscriptValue: '87', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 55, symbol: 'Cs', name: 'Cesium', atomicWeight: '132.905', abundance: 100.0, color: 0x9932cc, superscript: false, superscriptValue: '', symbolLength: 2, superscriptLength: 0 },
+            { atomicNumber: 56, symbol: 'Ba', name: 'Barium-138', atomicWeight: '137.91', abundance: 71.7, color: 0xFFD700, superscript: true, superscriptValue: '138', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 87, symbol: 'Fr', name: 'Francium', atomicWeight: '[223]', abundance: 0.00000000001, color: 0xff4500, superscript: false, superscriptValue: '', symbolLength: 2, superscriptLength: 0 },
+            { atomicNumber: 4, symbol: 'Be', name: 'Beryllium-7', atomicWeight: '7.016', abundance: 0.00000000001, color: 0x00bfff, superscript: true, superscriptValue: '7', symbolLength: 2, superscriptLength: 1 },
+            { atomicNumber: 4, symbol: 'Be', name: 'Beryllium-9', atomicWeight: '9.012', abundance: 100.0, color: 0x00bfff, superscript: true, superscriptValue: '9', symbolLength: 2, superscriptLength: 1 },
+            { atomicNumber: 4, symbol: 'Be', name: 'Beryllium-10', atomicWeight: '10.013', abundance: 0.00000000001, color: 0x00bfff, superscript: true, superscriptValue: '10', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 12, symbol: 'Mg', name: 'Magnesium-24', atomicWeight: '23.985', abundance: 79.0, color: 0x228b22, superscript: true, superscriptValue: '24', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 12, symbol: 'Mg', name: 'Magnesium-25', atomicWeight: '24.986', abundance: 10.0, color: 0x228b22, superscript: true, superscriptValue: '25', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 12, symbol: 'Mg', name: 'Magnesium-26', atomicWeight: '25.983', abundance: 11.0, color: 0x228b22, superscript: true, superscriptValue: '26', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 20, symbol: 'Ca', name: 'Calcium-40', atomicWeight: '40.078', abundance: 96.941, color: 0xffd700, superscript: true, superscriptValue: '40', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 20, symbol: 'Ca', name: 'Calcium-41', atomicWeight: '41.958', abundance: 0.00000000001, color: 0xffd700, superscript: true, superscriptValue: '41', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 20, symbol: 'Ca', name: 'Calcium-42', atomicWeight: '42.959', abundance: 0.647, color: 0xffd700, superscript: true, superscriptValue: '42', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 20, symbol: 'Ca', name: 'Calcium-44', atomicWeight: '43.955', abundance: 2.086, color: 0xffd700, superscript: true, superscriptValue: '44', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 20, symbol: 'Ca', name: 'Calcium-46', atomicWeight: '45.953', abundance: 0.004, color: 0xffd700, superscript: true, superscriptValue: '46', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 20, symbol: 'Ca', name: 'Calcium-48', atomicWeight: '47.952', abundance: 0.187, color: 0xffd700, superscript: true, superscriptValue: '48', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 38, symbol: 'Sr', name: 'Strontium-84', atomicWeight: '83.913', abundance: 0.56, color: 0xff6347, superscript: true, superscriptValue: '84', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 38, symbol: 'Sr', name: 'Strontium-85', atomicWeight: '84.912', abundance: 82.58, color: 0xff6347, superscript: true, superscriptValue: '85', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 38, symbol: 'Sr', name: 'Strontium-86', atomicWeight: '85.909', abundance: 9.86, color: 0xff6347, superscript: true, superscriptValue: '86', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 38, symbol: 'Sr', name: 'Strontium-87', atomicWeight: '86.908', abundance: 7.0, color: 0xff6347, superscript: true, superscriptValue: '87', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 88, symbol: 'Ra', name: 'Radium-226', atomicWeight: '226.025', abundance: 100.0, color: 0x8b0000, superscript: true, superscriptValue: '226', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 88, symbol: 'Ra', name: 'Radium-223', atomicWeight: '223.018', abundance: 0.00000000001, color: 0x8b0000, superscript: true, superscriptValue: '223', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 88, symbol: 'Ra', name: 'Radium-224', atomicWeight: '224.020', abundance: 0.00000000001, color: 0x8b0000, superscript: true, superscriptValue: '224', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 88, symbol: 'Ra', name: 'Radium-225', atomicWeight: '225.023', abundance: 0.00000000001, color: 0x8b0000, superscript: true, superscriptValue: '225', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 88, symbol: 'Ra', name: 'Radium-227', atomicWeight: '227.027', abundance: 0.00000000001, color: 0x8b0000, superscript: true, superscriptValue: '227', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 88, symbol: 'Ra', name: 'Radium-228', atomicWeight: '228.031', abundance: 0.00000000001, color: 0x8b0000, superscript: true, superscriptValue: '228', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 21, symbol: 'Sc', name: 'Scandium-45', atomicWeight: '44.956', abundance: 100.0, color: 0xff4500, superscript: true, superscriptValue: '45', symbolLength: 2, superscriptLength: 2 },        
+            { atomicNumber: 39, symbol: 'Y', name: 'Yttrium-89', atomicWeight: '88.906', abundance: 100.0, color: 0x1e90ff, superscript: true, superscriptValue: '89', symbolLength: 1, superscriptLength: 2 },                
+            { atomicNumber: 57, symbol: 'La', name: 'Lanthanum-138', atomicWeight: '137.907', abundance: 0.090, color: 0xffd700, superscript: true, superscriptValue: '138', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 57, symbol: 'La', name: 'Lanthanum-139', atomicWeight: '138.906', abundance: 99.910, color: 0xffd700, superscript: true, superscriptValue: '139', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 89, symbol: 'Ac', name: 'Actinium-227', atomicWeight: '227.027', abundance: 0.01, color: 0xff8c00, superscript: true, superscriptValue: '139', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 89, symbol: 'Ac', name: 'Actinium-228', atomicWeight: '228.031', abundance: 0.00000000001, color: 0xff8c00, superscript: true, superscriptValue: '228', symbolLength: 2, superscriptLength: 3 },            
+            { atomicNumber: 58, symbol: 'Ce', name: 'Cerium-136', atomicWeight: '135.907', abundance: 0.19, color: 0xffd700, superscript: true, superscriptValue: '136', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 58, symbol: 'Ce', name: 'Cerium-138', atomicWeight: '137.905', abundance: 0.25, color: 0xffd700, superscript: true, superscriptValue: '138', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 58, symbol: 'Ce', name: 'Cerium-140', atomicWeight: '139.905', abundance: 88.48, color: 0xffd700, superscript: true, superscriptValue: '140', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 58, symbol: 'Ce', name: 'Cerium-142', atomicWeight: '141.909', abundance: 11.08, color: 0xffd700, superscript: true, superscriptValue: '142', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 59, symbol: 'Pr', name: 'Praseodymium-141', atomicWeight: '140.907', abundance: 100.0, color: 0x00bfff, superscript: true, superscriptValue: '141', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 60, symbol: 'Nd', name: 'Neodymium-142', atomicWeight: '141.907', abundance: 27.2, color: 0x228b22, superscript: true, superscriptValue: '142', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 60, symbol: 'Nd', name: 'Neodymium-143', atomicWeight: '142.909', abundance: 12.2, color: 0x228b22, superscript: true, superscriptValue: '143', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 60, symbol: 'Nd', name: 'Neodymium-144', atomicWeight: '143.910', abundance: 23.8, color: 0x228b22, superscript: true, superscriptValue: '144', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 60, symbol: 'Nd', name: 'Neodymium-145', atomicWeight: '144.912', abundance: 8.3, color: 0x228b22, superscript: true, superscriptValue: '145', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 60, symbol: 'Nd', name: 'Neodymium-146', atomicWeight: '145.913', abundance: 17.2, color: 0x228b22, superscript: true, superscriptValue: '146', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 60, symbol: 'Nd', name: 'Neodymium-148', atomicWeight: '147.916', abundance: 5.7, color: 0x228b22, superscript: true, superscriptValue: '148', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 60, symbol: 'Nd', name: 'Neodymium-150', atomicWeight: '149.920', abundance: 5.6, color: 0x228b22, superscript: true, superscriptValue: '150', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 61, symbol: 'Pm', name: 'Promethium-145', atomicWeight: '145.0', abundance: 0.00000000001, color: 0xff6347, superscript: true, superscriptValue: '145', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 62, symbol: 'Sm', name: 'Samarium-144', atomicWeight: '143.912', abundance: 3.1, color: 0x1e90ff, superscript: true, superscriptValue: '144', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 62, symbol: 'Sm', name: 'Samarium-147', atomicWeight: '146.915', abundance: 11.3, color: 0x1e90ff, superscript: true, superscriptValue: '147', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 62, symbol: 'Sm', name: 'Samarium-148', atomicWeight: '147.914', abundance: 7.4, color: 0x1e90ff, superscript: true, superscriptValue: '148', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 62, symbol: 'Sm', name: 'Samarium-149', atomicWeight: '148.917', abundance: 13.8, color: 0x1e90ff, superscript: true, superscriptValue: '149', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 62, symbol: 'Sm', name: 'Samarium-150', atomicWeight: '149.917', abundance: 7.4, color: 0x1e90ff, superscript: true, superscriptValue: '150', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 62, symbol: 'Sm', name: 'Samarium-152', atomicWeight: '151.919', abundance: 26.8, color: 0x1e90ff, superscript: true, superscriptValue: '152', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 62, symbol: 'Sm', name: 'Samarium-154', atomicWeight: '153.922', abundance: 22.0, color: 0x1e90ff, superscript: true, superscriptValue: '154', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 63, symbol: 'Eu', name: 'Europium-151', atomicWeight: '150.919', abundance: 47.8, color: 0x8b0000, superscript: true, superscriptValue: '151', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 63, symbol: 'Eu', name: 'Europium-153', atomicWeight: '152.921', abundance: 52.2, color: 0x8b0000, superscript: true, superscriptValue: '153', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 64, symbol: 'Gd', name: 'Gadolinium-152', atomicWeight: '151.919', abundance: 0.2, color: 0x32cd32, superscript: true, superscriptValue: '152', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 64, symbol: 'Gd', name: 'Gadolinium-154', atomicWeight: '153.920', abundance: 2.2, color: 0x32cd32, superscript: true, superscriptValue: '154', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 64, symbol: 'Gd', name: 'Gadolinium-155', atomicWeight: '154.922', abundance: 14.8, color: 0x32cd32, superscript: true, superscriptValue: '155', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 64, symbol: 'Gd', name: 'Gadolinium-156', atomicWeight: '155.922', abundance: 20.5, color: 0x32cd32, superscript: true, superscriptValue: '156', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 64, symbol: 'Gd', name: 'Gadolinium-157', atomicWeight: '156.924', abundance: 15.7, color: 0x32cd32, superscript: true, superscriptValue: '157', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 64, symbol: 'Gd', name: 'Gadolinium-158', atomicWeight: '157.924', abundance: 24.8, color: 0x32cd32, superscript: true, superscriptValue: '158', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 64, symbol: 'Gd', name: 'Gadolinium-160', atomicWeight: '159.927', abundance: 21.8, color: 0x32cd32, superscript: true, superscriptValue: '160', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 65, symbol: 'Tb', name: 'Terbium-159', atomicWeight: '158.925', abundance: 100.0, color: 0xffd700, superscript: true, superscriptValue: '159', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 66, symbol: 'Dy', name: 'Dysprosium-156', atomicWeight: '155.925', abundance: 0.06, color: 0x00bfff, superscript: true, superscriptValue: '156', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 66, symbol: 'Dy', name: 'Dysprosium-158', atomicWeight: '157.924', abundance: 0.1, color: 0x00bfff, superscript: true, superscriptValue: '158', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 66, symbol: 'Dy', name: 'Dysprosium-160', atomicWeight: '159.925', abundance: 2.34, color: 0x00bfff, superscript: true, superscriptValue: '160', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 66, symbol: 'Dy', name: 'Dysprosium-161', atomicWeight: '160.926', abundance: 18.9, color: 0x00bfff, superscript: true, superscriptValue: '161', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 66, symbol: 'Dy', name: 'Dysprosium-162', atomicWeight: '161.926', abundance: 25.5, color: 0x00bfff, superscript: true, superscriptValue: '162', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 66, symbol: 'Dy', name: 'Dysprosium-163', atomicWeight: '162.928', abundance: 24.9, color: 0x00bfff, superscript: true, superscriptValue: '163', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 66, symbol: 'Dy', name: 'Dysprosium-164', atomicWeight: '163.929', abundance: 28.2, color: 0x00bfff, superscript: true, superscriptValue: '164', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 67, symbol: 'Ho', name: 'Holmium-165', atomicWeight: '164.930', abundance: 100.0, color: 0xff6347, superscript: true, superscriptValue: '165', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 68, symbol: 'Er', name: 'Erbium-162', atomicWeight: '161.928', abundance: 0.14, color: 0x228b22, superscript: true, superscriptValue: '162', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 68, symbol: 'Er', name: 'Erbium-164', atomicWeight: '163.929', abundance: 1.61, color: 0x228b22, superscript: true, superscriptValue: '164', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 68, symbol: 'Er', name: 'Erbium-166', atomicWeight: '165.930', abundance: 33.6, color: 0x228b22, superscript: true, superscriptValue: '166', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 68, symbol: 'Er', name: 'Erbium-167', atomicWeight: '166.932', abundance: 22.95, color: 0x228b22, superscript: true, superscriptValue: '167', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 68, symbol: 'Er', name: 'Erbium-168', atomicWeight: '167.932', abundance: 26.8, color: 0x228b22, superscript: true, superscriptValue: '168', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 68, symbol: 'Er', name: 'Erbium-170', atomicWeight: '169.935', abundance: 14.9, color: 0x228b22, superscript: true, superscriptValue: '170', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 69, symbol: 'Tm', name: 'Thulium-169', atomicWeight: '168.934', abundance: 100.0, color: 0xff4500, superscript: true, superscriptValue: '169', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 70, symbol: 'Yb', name: 'Ytterbium-168', atomicWeight: '167.933', abundance: 0.13, color: 0xff8c00, superscript: true, superscriptValue: '168', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 70, symbol: 'Yb', name: 'Ytterbium-170', atomicWeight: '169.935', abundance: 3.05, color: 0xff8c00, superscript: true, superscriptValue: '170', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 70, symbol: 'Yb', name: 'Ytterbium-171', atomicWeight: '170.936', abundance: 14.28, color: 0xff8c00, superscript: true, superscriptValue: '171', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 70, symbol: 'Yb', name: 'Ytterbium-172', atomicWeight: '171.936', abundance: 21.83, color: 0xff8c00, superscript: true, superscriptValue: '172', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 70, symbol: 'Yb', name: 'Ytterbium-173', atomicWeight: '172.938', abundance: 16.13, color: 0xff8c00, superscript: true, superscriptValue: '173', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 70, symbol: 'Yb', name: 'Ytterbium-174', atomicWeight: '173.938', abundance: 31.83, color: 0xff8c00, superscript: true, superscriptValue: '174', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 70, symbol: 'Yb', name: 'Ytterbium-176', atomicWeight: '175.942', abundance: 12.76, color: 0xff8c00, superscript: true, superscriptValue: '176', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 71, symbol: 'Lu', name: 'Lutetium-175', atomicWeight: '174.940', abundance: 97.41, color: 0x9932cc, superscript: true, superscriptValue: '175', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 71, symbol: 'Lu', name: 'Lutetium-176', atomicWeight: '175.942', abundance: 2.59, color: 0x9932cc, superscript: true, superscriptValue: '176', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 90, symbol: 'Th', name: 'Thorium-232', atomicWeight: '232.038', abundance: 100.0, color: 0xffd700, superscript: true, superscriptValue: '232', symbolLength: 2, superscriptLength: 3 },     
+            { atomicNumber: 91, symbol: 'Pa', name: 'Protactinium-231', atomicWeight: '231.035', abundance: 100.0, color: 0x9932cc, superscript: true, superscriptValue: '231', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 92, symbol: 'U', name: 'Uranium-234', atomicWeight: '234.040', abundance: 0.0054, color: 0x32cd32, superscript: true, superscriptValue: '234', symbolLength: 1, superscriptLength: 3 },
+            { atomicNumber: 92, symbol: 'U', name: 'Uranium-235', atomicWeight: '235.044', abundance: 0.720, color: 0x32cd32, superscript: true, superscriptValue: '235', symbolLength: 1, superscriptLength: 3 },
+            { atomicNumber: 92, symbol: 'U', name: 'Uranium-238', atomicWeight: '238.051', abundance: 99.274, color: 0x32cd32, superscript: true, superscriptValue: '238', symbolLength: 1, superscriptLength: 3 },
+            { atomicNumber: 93, symbol: 'Np', name: 'Neptunium-237', atomicWeight: '237.048', abundance: 0.00000000001, color: 0xff6347, superscript: true, superscriptValue: '237', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 94, symbol: 'Pu', name: 'Plutonium-238', atomicWeight: '238.049', abundance: 0.00000000001, color: 0xff4500, superscript: true, superscriptValue: '238', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 94, symbol: 'Pu', name: 'Plutonium-239', atomicWeight: '239.052', abundance: 0.00000000001, color: 0xff4500, superscript: true, superscriptValue: '239', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 94, symbol: 'Pu', name: 'Plutonium-240', atomicWeight: '240.054', abundance: 0.00000000001, color: 0xff4500, superscript: true, superscriptValue: '240', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 94, symbol: 'Pu', name: 'Plutonium-244', atomicWeight: '244.064', abundance: 0.00000000001, color: 0xff4500, superscript: true, superscriptValue: '244', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 95, symbol: 'Am', name: 'Americium-241', atomicWeight: '241.057', abundance: 0.00000000001, color: 0xff8c00, superscript: true, superscriptValue: '241', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 95, symbol: 'Am', name: 'Americium-243', atomicWeight: '243.061', abundance: 0.00000000001, color: 0xff8c00, superscript: true, superscriptValue: '243', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 96, symbol: 'Cm', name: 'Curium-244', atomicWeight: '244.062', abundance: 0.00000000001, color: 0xff1493, superscript: true, superscriptValue: '244', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 96, symbol: 'Cm', name: 'Curium-245', atomicWeight: '245.065', abundance: 0.00000000001, color: 0xff1493, superscript: true, superscriptValue: '245', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 96, symbol: 'Cm', name: 'Curium-247', atomicWeight: '247.070', abundance: 0.00000000001, color: 0xff1493, superscript: true, superscriptValue: '247', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 97, symbol: 'Bk', name: 'Berkelium-247', atomicWeight: '247.070', abundance: 0.00000000001, color: 0x00bfff, superscript: true, superscriptValue: '247', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 97, symbol: 'Bk', name: 'Berkelium-249', atomicWeight: '249.074', abundance: 0.00000000001, color: 0x00bfff, superscript: true, superscriptValue: '249', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 98, symbol: 'Cf', name: 'Californium-249', atomicWeight: '249.074', abundance: 0.00000000001, color: 0x8b0000, superscript: true, superscriptValue: '249', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 98, symbol: 'Cf', name: 'Californium-251', atomicWeight: '251.080', abundance: 0.00000000001, color: 0x8b0000, superscript: true, superscriptValue: '251', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 99, symbol: 'Es', name: 'Einsteinium-252', atomicWeight: '252.083', abundance: 0.00000000001, color: 0x9932cc, superscript: true, superscriptValue: '252', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 100, symbol: 'Fm', name: 'Fermium-257', atomicWeight: '257.095', abundance: 0.00000000001, color: 0xffd700, superscript: true, superscriptValue: '257', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 101, symbol: 'Md', name: 'Mendelevium-258', atomicWeight: '258.098', abundance: 0.00000000001, color: 0xff4500, superscript: true, superscriptValue: '258', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 102, symbol: 'No', name: 'Nobelium-259', atomicWeight: '259.101', abundance: 0.00000000001, color: 0x32cd32, superscript: true, superscriptValue: '259', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 103, symbol: 'Lr', name: 'Lawrencium-262', atomicWeight: '262.110', abundance: 0.00000000001, color: 0x1e90ff, superscript: true, superscriptValue: '262', symbolLength: 2, superscriptLength: 3 },                
+            { atomicNumber: 22, symbol: 'Ti', name: 'Titanium-46', atomicWeight: '45.952', abundance: 8.25, color: 0x1e90ff, superscript: true, superscriptValue: '46', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 22, symbol: 'Ti', name: 'Titanium-47', atomicWeight: '46.951', abundance: 7.44, color: 0x1e90ff, superscript: true, superscriptValue: '47', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 22, symbol: 'Ti', name: 'Titanium-48', atomicWeight: '47.947', abundance: 73.72, color: 0x1e90ff, superscript: true, superscriptValue: '48', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 22, symbol: 'Ti', name: 'Titanium-49', atomicWeight: '48.947', abundance: 5.41, color: 0x1e90ff, superscript: true, superscriptValue: '49', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 22, symbol: 'Ti', name: 'Titanium-50', atomicWeight: '49.944', abundance: 5.18, color: 0x1e90ff, superscript: true, superscriptValue: '50', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 40, symbol: 'Zr', name: 'Zirconium-90', atomicWeight: '89.905', abundance: 51.45, color: 0x8b0000, superscript: true, superscriptValue: '90', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 40, symbol: 'Zr', name: 'Zirconium-91', atomicWeight: '90.906', abundance: 11.22, color: 0x8b0000, superscript: true, superscriptValue: '91', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 40, symbol: 'Zr', name: 'Zirconium-92', atomicWeight: '91.905', abundance: 17.15, color: 0x8b0000, superscript: true, superscriptValue: '92', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 40, symbol: 'Zr', name: 'Zirconium-94', atomicWeight: '93.906', abundance: 17.38, color: 0x8b0000, superscript: true, superscriptValue: '94', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 40, symbol: 'Zr', name: 'Zirconium-96', atomicWeight: '95.908', abundance: 2.80, color: 0x8b0000, superscript: true, superscriptValue: '96', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 72, symbol: 'Hf', name: 'Hafnium-174', atomicWeight: '173.940', abundance: 0.16, color: 0xffd700, superscript: true, superscriptValue: '174', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 72, symbol: 'Hf', name: 'Hafnium-176', atomicWeight: '175.941', abundance: 5.26, color: 0xffd700, superscript: true, superscriptValue: '176', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 72, symbol: 'Hf', name: 'Hafnium-177', atomicWeight: '176.943', abundance: 18.60, color: 0xffd700, superscript: true, superscriptValue: '177', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 72, symbol: 'Hf', name: 'Hafnium-178', atomicWeight: '177.944', abundance: 27.28, color: 0xffd700, superscript: true, superscriptValue: '178', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 72, symbol: 'Hf', name: 'Hafnium-179', atomicWeight: '178.945', abundance: 13.62, color: 0xffd700, superscript: true, superscriptValue: '179', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 72, symbol: 'Hf', name: 'Hafnium-180', atomicWeight: '179.947', abundance: 35.08, color: 0xffd700, superscript: true, superscriptValue: '180', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 104, symbol: 'Rf', name: 'Rutherfordium-267', atomicWeight: '[267]', abundance: 0.00000000001, color: 0xff6347, superscript: true, superscriptValue: '267', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 23, symbol: 'V', name: 'Vanadium-50', atomicWeight: '49.947', abundance: 0.25, color: 0x8b0000, superscript: true, superscriptValue: '50', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 23, symbol: 'V', name: 'Vanadium-51', atomicWeight: '50.944', abundance: 99.75, color: 0x8b0000, superscript: true, superscriptValue: '51', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 41, symbol: 'Nb', name: 'Niobium-93', atomicWeight: '92.906', abundance: 100.0, color: 0x9932cc, superscript: true, superscriptValue: '93', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 73, symbol: 'Ta', name: 'Tantalum-180', atomicWeight: '179.947', abundance: 0.012, color: 0xFFD700, superscript: true, superscriptValue: '180', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 73, symbol: 'Ta', name: 'Tantalum-181', atomicWeight: '180.948', abundance: 99.988, color: 0xFFD700, superscript: true, superscriptValue: '181', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 105, symbol: 'Db', name: 'Dubnium-268', atomicWeight: '[268]', abundance: 0.00000000001, color: 0xff6347, superscript: true, superscriptValue: '268', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 24, symbol: 'Cr', name: 'Chromium-50', atomicWeight: '49.946', abundance: 4.345, color: 0x00bfff, superscript: true, superscriptValue: '50', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 24, symbol: 'Cr', name: 'Chromium-52', atomicWeight: '51.941', abundance: 83.789, color: 0x00bfff, superscript: true, superscriptValue: '52', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 24, symbol: 'Cr', name: 'Chromium-53', atomicWeight: '52.941', abundance: 9.501, color: 0x00bfff, superscript: true, superscriptValue: '53', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 24, symbol: 'Cr', name: 'Chromium-54', atomicWeight: '53.939', abundance: 2.365, color: 0x00bfff, superscript: true, superscriptValue: '54', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 42, symbol: 'Mo', name: 'Molybdenum-92', atomicWeight: '91.906', abundance: 14.84, color: 0x9932cc, superscript: true, superscriptValue: '92', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 42, symbol: 'Mo', name: 'Molybdenum-94', atomicWeight: '93.905', abundance: 9.25, color: 0x9932cc, superscript: true, superscriptValue: '94', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 42, symbol: 'Mo', name: 'Molybdenum-95', atomicWeight: '94.906', abundance: 15.92, color: 0x9932cc, superscript: true, superscriptValue: '95', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 42, symbol: 'Mo', name: 'Molybdenum-96', atomicWeight: '95.905', abundance: 16.68, color: 0x9932cc, superscript: true, superscriptValue: '96', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 42, symbol: 'Mo', name: 'Molybdenum-97', atomicWeight: '96.906', abundance: 9.55, color: 0x9932cc, superscript: true, superscriptValue: '97', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 42, symbol: 'Mo', name: 'Molybdenum-98', atomicWeight: '97.905', abundance: 24.13, color: 0x9932cc, superscript: true, superscriptValue: '98', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 42, symbol: 'Mo', name: 'Molybdenum-100', atomicWeight: '99.907', abundance: 9.63, color: 0x9932cc, superscript: true, superscriptValue: '100', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 74, symbol: 'W', name: 'Tungsten-182', atomicWeight: '181.948', abundance: 26.50, color: 0xffd700, superscript: true, superscriptValue: '182', symbolLength: 1, superscriptLength: 3 },
+            { atomicNumber: 74, symbol: 'W', name: 'Tungsten-183', atomicWeight: '182.950', abundance: 14.31, color: 0xffd700, superscript: true, superscriptValue: '183', symbolLength: 1, superscriptLength: 3 },
+            { atomicNumber: 74, symbol: 'W', name: 'Tungsten-184', atomicWeight: '183.950', abundance: 30.64, color: 0xffd700, superscript: true, superscriptValue: '184', symbolLength: 1, superscriptLength: 3 },
+            { atomicNumber: 74, symbol: 'W', name: 'Tungsten-186', atomicWeight: '185.954', abundance: 28.43, color: 0xffd700, superscript: true, superscriptValue: '186', symbolLength: 1, superscriptLength: 3 },
+            { atomicNumber: 106, symbol: 'Sg', name: 'Seaborgium-271', atomicWeight: '[271]', abundance: 0.00000000001, color: 0x32cd32, superscript: true, superscriptValue: '271', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 25, symbol: 'Mn', name: 'Manganese-55', atomicWeight: '54.938', abundance: 100.0, color: 0xff6347, superscript: true, superscriptValue: '55', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 43, symbol: 'Tc', name: 'Technetium-98', atomicWeight: '97.907', abundance: 0.00000000001, color: 0x32cd32, superscript: true, superscriptValue: '98', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 75, symbol: 'Re', name: 'Rhenium-185', atomicWeight: '184.953', abundance: 37.4, color: 0x9932cc, superscript: true, superscriptValue: '185', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 75, symbol: 'Re', name: 'Rhenium-187', atomicWeight: '186.956', abundance: 62.6, color: 0x9932cc, superscript: true, superscriptValue: '187', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 107, symbol: 'Bh', name: 'Bohrium-270', atomicWeight: '[270]', abundance: 0.00000000001, color: 0xff4500, superscript: true, superscriptValue: '270', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 26, symbol: 'Fe', name: 'Iron-56', atomicWeight: '55.845', abundance: 91.754, color: 0xff6347, superscript: true, superscriptValue: '56', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 26, symbol: 'Fe', name: 'Iron-57', atomicWeight: '56.935', abundance: 2.119, color: 0xff6347, superscript: true, superscriptValue: '57', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 26, symbol: 'Fe', name: 'Iron-58', atomicWeight: '57.933', abundance: 0.282, color: 0xff6347, superscript: true, superscriptValue: '58', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 44, symbol: 'Ru', name: 'Ruthenium-102', atomicWeight: '101.904', abundance: 31.6, color: 0x9932cc, superscript: true, superscriptValue: '102', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 44, symbol: 'Ru', name: 'Ruthenium-104', atomicWeight: '103.905', abundance: 18.7, color: 0x9932cc, superscript: true, superscriptValue: '104', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 76, symbol: 'Os', name: 'Osmium-192', atomicWeight: '191.961', abundance: 40.8, color: 0xffd700, superscript: true, superscriptValue: '192', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 76, symbol: 'Os', name: 'Osmium-190', atomicWeight: '189.959', abundance: 26.1, color: 0xffd700, superscript: true, superscriptValue: '190', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 108, symbol: 'Hs', name: 'Hassium-277', atomicWeight: '[277]', abundance: 0.00000000001, color: 0x00bfff, superscript: true, superscriptValue: '277', symbolLength: 2, superscriptLength: 3 },        
+            { atomicNumber: 27, symbol: 'Co', name: 'Cobalt-59', atomicWeight: '58.933', abundance: 100.0, color: 0x4169e1, superscript: true, superscriptValue: '59', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 45, symbol: 'Rh', name: 'Rhodium-103', atomicWeight: '102.906', abundance: 100.0, color: 0xc0c0c0, superscript: true, superscriptValue: '103', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 77, symbol: 'Ir', name: 'Iridium-191', atomicWeight: '190.960', abundance: 37.3, color: 0xd3d3d3, superscript: true, superscriptValue: '191', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 77, symbol: 'Ir', name: 'Iridium-193', atomicWeight: '192.963', abundance: 62.7, color: 0xd3d3d3, superscript: true, superscriptValue: '193', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 109, symbol: 'Mt', name: 'Meitnerium-278', atomicWeight: '[278]', abundance: 0.00000000001, color: 0x8a2be2, superscript: true, superscriptValue: '278', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 28, symbol: 'Ni', name: 'Nickel-58', atomicWeight: '57.935', abundance: 68.077, color: 0x708090, superscript: true, superscriptValue: '58', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 28, symbol: 'Ni', name: 'Nickel-60', atomicWeight: '59.931', abundance: 26.223, color: 0x708090, superscript: true, superscriptValue: '60', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 28, symbol: 'Ni', name: 'Nickel-61', atomicWeight: '60.931', abundance: 1.140, color: 0x708090, superscript: true, superscriptValue: '61', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 28, symbol: 'Ni', name: 'Nickel-62', atomicWeight: '61.928', abundance: 3.635, color: 0x708090, superscript: true, superscriptValue: '62', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 28, symbol: 'Ni', name: 'Nickel-64', atomicWeight: '63.928', abundance: 0.925, color: 0x708090, superscript: true, superscriptValue: '64', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 46, symbol: 'Pd', name: 'Palladium-102', atomicWeight: '101.905', abundance: 1.02, color: 0xc0c0c0, superscript: true, superscriptValue: '102', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 46, symbol: 'Pd', name: 'Palladium-104', atomicWeight: '103.904', abundance: 11.14, color: 0xc0c0c0, superscript: true, superscriptValue: '104', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 46, symbol: 'Pd', name: 'Palladium-105', atomicWeight: '104.905', abundance: 22.33, color: 0xc0c0c0, superscript: true, superscriptValue: '105', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 46, symbol: 'Pd', name: 'Palladium-106', atomicWeight: '105.903', abundance: 27.33, color: 0xc0c0c0, superscript: true, superscriptValue: '106', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 46, symbol: 'Pd', name: 'Palladium-108', atomicWeight: '107.903', abundance: 26.46, color: 0xc0c0c0, superscript: true, superscriptValue: '108', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 46, symbol: 'Pd', name: 'Palladium-110', atomicWeight: '109.905', abundance: 11.72, color: 0xc0c0c0, superscript: true, superscriptValue: '110', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 78, symbol: 'Pt', name: 'Platinum-190', atomicWeight: '189.959', abundance: 0.01, color: 0xe5e4e2, superscript: true, superscriptValue: '190', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 78, symbol: 'Pt', name: 'Platinum-192', atomicWeight: '191.961', abundance: 0.79, color: 0xe5e4e2, superscript: true, superscriptValue: '192', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 78, symbol: 'Pt', name: 'Platinum-194', atomicWeight: '193.962', abundance: 32.9, color: 0xe5e4e2, superscript: true, superscriptValue: '194', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 78, symbol: 'Pt', name: 'Platinum-195', atomicWeight: '194.964', abundance: 33.8, color: 0xe5e4e2, superscript: true, superscriptValue: '195', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 78, symbol: 'Pt', name: 'Platinum-196', atomicWeight: '195.964', abundance: 25.3, color: 0xe5e4e2, superscript: true, superscriptValue: '196', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 78, symbol: 'Pt', name: 'Platinum-198', atomicWeight: '197.967', abundance: 7.2, color: 0xe5e4e2, superscript: true, superscriptValue: '198', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 110, symbol: 'Ds', name: 'Darmstadtium-281', atomicWeight: '[281]', abundance: 0.00000000001, color: 0xff4500, superscript: true, superscriptValue: '281', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 29, symbol: 'Cu', name: 'Copper-63', atomicWeight: '62.930', abundance: 69.17, color: 0xb87333, superscript: true, superscriptValue: '63', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 29, symbol: 'Cu', name: 'Copper-65', atomicWeight: '64.927', abundance: 30.83, color: 0xb87333, superscript: true, superscriptValue: '65', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 47, symbol: 'Ag', name: 'Silver-107', atomicWeight: '106.905', abundance: 51.839, color: 0xc0c0c0, superscript: true, superscriptValue: '107', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 47, symbol: 'Ag', name: 'Silver-109', atomicWeight: '108.905', abundance: 48.161, color: 0xc0c0c0, superscript: true, superscriptValue: '109', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 79, symbol: 'Au', name: 'Gold-197', atomicWeight: '196.967', abundance: 100.0, color: 0xffd700, superscript: true, superscriptValue: '197', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 111, symbol: 'Rg', name: 'Roentgenium-282', atomicWeight: '[282]', abundance: 0.00000000001, color: 0xff6347, superscript: true, superscriptValue: '282', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 30, symbol: 'Zn', name: 'Zinc-64', atomicWeight: '63.929', abundance: 48.6, color: 0x8a2be2, superscript: true, superscriptValue: '64', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 30, symbol: 'Zn', name: 'Zinc-66', atomicWeight: '65.926', abundance: 27.9, color: 0x8a2be2, superscript: true, superscriptValue: '66', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 30, symbol: 'Zn', name: 'Zinc-67', atomicWeight: '66.927', abundance: 4.1, color: 0x8a2be2, superscript: true, superscriptValue: '67', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 30, symbol: 'Zn', name: 'Zinc-68', atomicWeight: '67.924', abundance: 18.8, color: 0x8a2be2, superscript: true, superscriptValue: '68', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 30, symbol: 'Zn', name: 'Zinc-70', atomicWeight: '69.925', abundance: 0.6, color: 0x8a2be2, superscript: true, superscriptValue: '70', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 48, symbol: 'Cd', name: 'Cadmium-106', atomicWeight: '105.906', abundance: 1.25, color: 0x00ced1, superscript: true, superscriptValue: '106', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 48, symbol: 'Cd', name: 'Cadmium-108', atomicWeight: '107.904', abundance: 0.89, color: 0x00ced1, superscript: true, superscriptValue: '108', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 48, symbol: 'Cd', name: 'Cadmium-110', atomicWeight: '109.903', abundance: 12.49, color: 0x00ced1, superscript: true, superscriptValue: '110', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 48, symbol: 'Cd', name: 'Cadmium-111', atomicWeight: '110.904', abundance: 12.80, color: 0x00ced1, superscript: true, superscriptValue: '111', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 48, symbol: 'Cd', name: 'Cadmium-112', atomicWeight: '111.902', abundance: 24.13, color: 0x00ced1, superscript: true, superscriptValue: '112', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 48, symbol: 'Cd', name: 'Cadmium-113', atomicWeight: '112.904', abundance: 12.22, color: 0x00ced1, superscript: true, superscriptValue: '113', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 48, symbol: 'Cd', name: 'Cadmium-114', atomicWeight: '113.903', abundance: 28.73, color: 0x00ced1, superscript: true, superscriptValue: '114', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 48, symbol: 'Cd', name: 'Cadmium-116', atomicWeight: '115.904', abundance: 7.49, color: 0x00ced1, superscript: true, superscriptValue: '116', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 80, symbol: 'Hg', name: 'Mercury-196', atomicWeight: '195.965', abundance: 0.15, color: 0xffd700, superscript: true, superscriptValue: '196', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 80, symbol: 'Hg', name: 'Mercury-198', atomicWeight: '197.967', abundance: 10.04, color: 0xffd700, superscript: true, superscriptValue: '198', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 80, symbol: 'Hg', name: 'Mercury-199', atomicWeight: '198.968', abundance: 16.94, color: 0xffd700, superscript: true, superscriptValue: '199', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 80, symbol: 'Hg', name: 'Mercury-200', atomicWeight: '199.968', abundance: 23.14, color: 0xffd700, superscript: true, superscriptValue: '200', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 80, symbol: 'Hg', name: 'Mercury-201', atomicWeight: '200.970', abundance: 13.17, color: 0xffd700, superscript: true, superscriptValue: '201', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 80, symbol: 'Hg', name: 'Mercury-202', atomicWeight: '201.970', abundance: 29.74, color: 0xffd700, superscript: true, superscriptValue: '202', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 80, symbol: 'Hg', name: 'Mercury-204', atomicWeight: '203.973', abundance: 6.82, color: 0xffd700, superscript: true, superscriptValue: '204', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 112, symbol: 'Cn', name: 'Copernicium-285', atomicWeight: '[285]', abundance: 0.00000000001, color: 0x00ffff, superscript: true, superscriptValue: '285', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 5, symbol: 'B', name: 'Boron-10', atomicWeight: '10.012', abundance: 19.9, color: 0x32cd32, superscript: true, superscriptValue: '10', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 5, symbol: 'B', name: 'Boron-11', atomicWeight: '11.009', abundance: 80.1, color: 0x32cd32, superscript: true, superscriptValue: '11', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 13, symbol: 'Al', name: 'Aluminium-27', atomicWeight: '26.982', abundance: 100.0, color: 0x4682b4, superscript: true, superscriptValue: '27', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 31, symbol: 'Ga', name: 'Gallium-69', atomicWeight: '68.926', abundance: 60.1, color: 0x87ceeb, superscript: true, superscriptValue: '69', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 31, symbol: 'Ga', name: 'Gallium-71', atomicWeight: '70.925', abundance: 39.9, color: 0x87ceeb, superscript: true, superscriptValue: '71', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 49, symbol: 'In', name: 'Indium-113', atomicWeight: '112.904', abundance: 4.29, color: 0xcd5c5c, superscript: true, superscriptValue: '113', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 49, symbol: 'In', name: 'Indium-115', atomicWeight: '114.904', abundance: 95.71, color: 0xcd5c5c, superscript: true, superscriptValue: '115', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 81, symbol: 'Tl', name: 'Thallium-203', atomicWeight: '202.972', abundance: 29.5, color: 0x8b4513, superscript: true, superscriptValue: '203', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 81, symbol: 'Tl', name: 'Thallium-205', atomicWeight: '204.974', abundance: 70.5, color: 0x8b4513, superscript: true, superscriptValue: '205', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 113, symbol: 'Nh', name: 'Nihonium-284', atomicWeight: '[284]', abundance: 0.00000000001, color: 0xffa500, superscript: true, superscriptValue: '284', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 6, symbol: 'C', name: 'Carbon-12', atomicWeight: '12.000', abundance: 98.93, color: 0x708090, superscript: true, superscriptValue: '12', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 6, symbol: 'C', name: 'Carbon-13', atomicWeight: '13.003', abundance: 1.07, color: 0x708090, superscript: true, superscriptValue: '13', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 6, symbol: 'C', name: 'Carbon-14', atomicWeight: '14.003', abundance: 0.00000000001, color: 0x708090, superscript: true, superscriptValue: '14', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 14, symbol: 'Si', name: 'Silicon-28', atomicWeight: '27.977', abundance: 92.23, color: 0x9acd32, superscript: true, superscriptValue: '28', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 14, symbol: 'Si', name: 'Silicon-29', atomicWeight: '28.976', abundance: 4.67, color: 0x9acd32, superscript: true, superscriptValue: '29', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 14, symbol: 'Si', name: 'Silicon-30', atomicWeight: '29.974', abundance: 3.1, color: 0x9acd32, superscript: true, superscriptValue: '30', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 32, symbol: 'Ge', name: 'Germanium-70', atomicWeight: '69.924', abundance: 20.84, color: 0x4682b4, superscript: true, superscriptValue: '70', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 32, symbol: 'Ge', name: 'Germanium-72', atomicWeight: '71.922', abundance: 27.54, color: 0x4682b4, superscript: true, superscriptValue: '72', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 32, symbol: 'Ge', name: 'Germanium-73', atomicWeight: '72.923', abundance: 7.73, color: 0x4682b4, superscript: true, superscriptValue: '73', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 32, symbol: 'Ge', name: 'Germanium-74', atomicWeight: '73.921', abundance: 36.28, color: 0x4682b4, superscript: true, superscriptValue: '74', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 32, symbol: 'Ge', name: 'Germanium-76', atomicWeight: '75.921', abundance: 7.61, color: 0x4682b4, superscript: true, superscriptValue: '76', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 50, symbol: 'Sn', name: 'Tin-112', atomicWeight: '111.904', abundance: 0.97, color: 0xcd5c5c, superscript: true, superscriptValue: '112', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 50, symbol: 'Sn', name: 'Tin-114', atomicWeight: '113.902', abundance: 0.66, color: 0xcd5c5c, superscript: true, superscriptValue: '114', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 50, symbol: 'Sn', name: 'Tin-115', atomicWeight: '114.903', abundance: 0.34, color: 0xcd5c5c, superscript: true, superscriptValue: '115', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 50, symbol: 'Sn', name: 'Tin-116', atomicWeight: '115.901', abundance: 14.54, color: 0xcd5c5c, superscript: true, superscriptValue: '116', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 50, symbol: 'Sn', name: 'Tin-117', atomicWeight: '116.902', abundance: 7.68, color: 0xcd5c5c, superscript: true, superscriptValue: '117', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 50, symbol: 'Sn', name: 'Tin-118', atomicWeight: '117.901', abundance: 24.22, color: 0xcd5c5c, superscript: true, superscriptValue: '118', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 82, symbol: 'Pb', name: 'Lead-204', atomicWeight: '203.973', abundance: 1.4, color: 0x808080, superscript: true, superscriptValue: '204', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 82, symbol: 'Pb', name: 'Lead-206', atomicWeight: '205.974', abundance: 24.1, color: 0x808080, superscript: true, superscriptValue: '206', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 82, symbol: 'Pb', name: 'Lead-207', atomicWeight: '206.976', abundance: 22.1, color: 0x808080, superscript: true, superscriptValue: '207', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 82, symbol: 'Pb', name: 'Lead-208', atomicWeight: '207.977', abundance: 52.4, color: 0x808080, superscript: true, superscriptValue: '208', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 114, symbol: 'Fl', name: 'Flerovium-289', atomicWeight: '[289]', abundance: 0.00000000001, color: 0xffd700, superscript: true, superscriptValue: '289', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 7, symbol: 'N', name: 'Nitrogen-14', atomicWeight: '14.003', abundance: 99.634, color: 0x0000ff, superscript: true, superscriptValue: '14', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 7, symbol: 'N', name: 'Nitrogen-15', atomicWeight: '15.000', abundance: 0.366, color: 0x0000ff, superscript: true, superscriptValue: '15', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 15, symbol: 'P', name: 'Phosphorus-31', atomicWeight: '30.974', abundance: 100.0, color: 0xffa500, superscript: true, superscriptValue: '31', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 33, symbol: 'As', name: 'Arsenic-75', atomicWeight: '74.922', abundance: 100.0, color: 0x8b4513, superscript: true, superscriptValue: '75', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 51, symbol: 'Sb', name: 'Antimony-121', atomicWeight: '120.903', abundance: 57.21, color: 0x2e8b57, superscript: true, superscriptValue: '121', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 51, symbol: 'Sb', name: 'Antimony-123', atomicWeight: '122.904', abundance: 42.79, color: 0x2e8b57, superscript: true, superscriptValue: '123', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 83, symbol: 'Bi', name: 'Bismuth-209', atomicWeight: '208.980', abundance: 100.0, color: 0x8b008b, superscript: true, superscriptValue: '209', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 115, symbol: 'Uup', name: 'Ununpentium-288', atomicWeight: '[288]', abundance: 0.00000000001, color: 0xff6347, superscript: true, superscriptValue: '288', symbolLength: 3, superscriptLength: 3 },
+            { atomicNumber: 115, symbol: 'Uup', name: 'Ununpentium-289', atomicWeight: '[289]', abundance: 0.00000000001, color: 0xff6347, superscript: true, superscriptValue: '289', symbolLength: 3, superscriptLength: 3 },
+            { atomicNumber: 8, symbol: 'O', name: 'Oxygen-16', atomicWeight: '15.995', abundance: 99.757, color: 0xff4500, superscript: true, superscriptValue: '16', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 8, symbol: 'O', name: 'Oxygen-17', atomicWeight: '16.999', abundance: 0.038, color: 0xff4500, superscript: true, superscriptValue: '17', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 8, symbol: 'O', name: 'Oxygen-18', atomicWeight: '17.999', abundance: 0.205, color: 0xff4500, superscript: true, superscriptValue: '18', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 16, symbol: 'S', name: 'Sulfur-32', atomicWeight: '31.972', abundance: 94.99, color: 0xffd700, superscript: true, superscriptValue: '32', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 16, symbol: 'S', name: 'Sulfur-33', atomicWeight: '32.971', abundance: 0.75, color: 0xffd700, superscript: true, superscriptValue: '33', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 16, symbol: 'S', name: 'Sulfur-34', atomicWeight: '33.968', abundance: 4.25, color: 0xffd700, superscript: true, superscriptValue: '34', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 16, symbol: 'S', name: 'Sulfur-36', atomicWeight: '35.967', abundance: 0.01, color: 0xffd700, superscript: true, superscriptValue: '36', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 34, symbol: 'Se', name: 'Selenium-74', atomicWeight: '73.922', abundance: 0.89, color: 0x2e8b57, superscript: true, superscriptValue: '74', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 34, symbol: 'Se', name: 'Selenium-76', atomicWeight: '75.919', abundance: 9.37, color: 0x2e8b57, superscript: true, superscriptValue: '76', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 34, symbol: 'Se', name: 'Selenium-77', atomicWeight: '76.919', abundance: 7.63, color: 0x2e8b57, superscript: true, superscriptValue: '77', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 34, symbol: 'Se', name: 'Selenium-78', atomicWeight: '77.917', abundance: 23.77, color: 0x2e8b57, superscript: true, superscriptValue: '78', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 34, symbol: 'Se', name: 'Selenium-80', atomicWeight: '79.916', abundance: 49.61, color: 0x2e8b57, superscript: true, superscriptValue: '80', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 34, symbol: 'Se', name: 'Selenium-82', atomicWeight: '81.916', abundance: 8.73, color: 0x2e8b57, superscript: true, superscriptValue: '82', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 52, symbol: 'Te', name: 'Tellurium-120', atomicWeight: '119.904', abundance: 0.09, color: 0xd2691e, superscript: true, superscriptValue: '120', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 52, symbol: 'Te', name: 'Tellurium-122', atomicWeight: '121.903', abundance: 2.55, color: 0xd2691e, superscript: true, superscriptValue: '122', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 52, symbol: 'Te', name: 'Tellurium-123', atomicWeight: '122.904', abundance: 0.89, color: 0xd2691e, superscript: true, superscriptValue: '123', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 52, symbol: 'Te', name: 'Tellurium-124', atomicWeight: '123.902', abundance: 4.74, color: 0xd2691e, superscript: true, superscriptValue: '124', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 52, symbol: 'Te', name: 'Tellurium-125', atomicWeight: '124.904', abundance: 7.07, color: 0xd2691e, superscript: true, superscriptValue: '125', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 52, symbol: 'Te', name: 'Tellurium-126', atomicWeight: '125.903', abundance: 18.84, color: 0xd2691e, superscript: true, superscriptValue: '126', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 52, symbol: 'Te', name: 'Tellurium-128', atomicWeight: '127.904', abundance: 31.74, color: 0xd2691e, superscript: true, superscriptValue: '128', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 52, symbol: 'Te', name: 'Tellurium-130', atomicWeight: '129.906', abundance: 34.08, color: 0xd2691e, superscript: true, superscriptValue: '130', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 84, symbol: 'Po', name: 'Polonium-209', atomicWeight: '208.982', abundance: 0.00000000001, color: 0xff6347, superscript: true, superscriptValue: '209', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 84, symbol: 'Po', name: 'Polonium-210', atomicWeight: '209.982', abundance: 0.00000000001, color: 0xff6347, superscript: true, superscriptValue: '210', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 116, symbol: 'Lv', name: 'Livermorium-293', atomicWeight: '[293]', abundance: 0.00000000001, color: 0x8a2be2, superscript: true, superscriptValue: '293', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 9, symbol: 'F', name: 'Fluorine-19', atomicWeight: '18.998', abundance: 100.0, color: 0x00ff00, superscript: true, superscriptValue: '19', symbolLength: 1, superscriptLength: 2 },
+            { atomicNumber: 17, symbol: 'Cl', name: 'Chlorine-35', atomicWeight: '34.969', abundance: 75.78, color: 0x00fa9a, superscript: true, superscriptValue: '35', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 17, symbol: 'Cl', name: 'Chlorine-37', atomicWeight: '36.966', abundance: 24.22, color: 0x00fa9a, superscript: true, superscriptValue: '37', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 35, symbol: 'Br', name: 'Bromine-79', atomicWeight: '78.918', abundance: 50.69, color: 0xa52a2a, superscript: true, superscriptValue: '79', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 35, symbol: 'Br', name: 'Bromine-81', atomicWeight: '80.916', abundance: 49.31, color: 0xa52a2a, superscript: true, superscriptValue: '81', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 53, symbol: 'I', name: 'Iodine-127', atomicWeight: '126.904', abundance: 100.0, color: 0x800080, superscript: true, superscriptValue: '127', symbolLength: 1, superscriptLength: 3 },
+            { atomicNumber: 85, symbol: 'At', name: 'Astatine-210', atomicWeight: '[210]', abundance: 0.00000000001, color: 0xff4500, superscript: true, superscriptValue: '210', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 117, symbol: 'Uus', name: 'Ununseptium-294', atomicWeight: '[294]', abundance: 0.00000000001, color: 0x8b0000, superscript: true, superscriptValue: '294', symbolLength: 3, superscriptLength: 3 },
+            { atomicNumber: 2, symbol: 'He', name: 'Helium-3', atomicWeight: '3.016', abundance: 0.000137, color: 0xA45EE9, superscript: true, superscriptValue: '3', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 2, symbol: 'He', name: 'Helium-4', atomicWeight: '4.002', abundance: 99.999863, color: 0xFF724C, superscript: true, superscriptValue: '4', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 10, symbol: 'Ne', name: 'Neon-20', atomicWeight: '19.992', abundance: 90.48, color: 0xFF724C, superscript: true, superscriptValue: '20', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 10, symbol: 'Ne', name: 'Neon-21', atomicWeight: '20.994', abundance: 0.27, color: 0xFF724C, superscript: true, superscriptValue: '21', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 10, symbol: 'Ne', name: 'Neon-22', atomicWeight: '21.991', abundance: 9.25, color: 0xFF724C, superscript: true, superscriptValue: '22', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 18, symbol: 'Ar', name: 'Argon-36', atomicWeight: '35.967', abundance: 0.3365, color: 0x9866C7, superscript: true, superscriptValue: '36', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 18, symbol: 'Ar', name: 'Argon-38', atomicWeight: '37.962', abundance: 0.0632, color: 0x9866C7, superscript: true, superscriptValue: '38', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 18, symbol: 'Ar', name: 'Argon-40', atomicWeight: '39.962', abundance: 99.6003, color: 0x9866C7, superscript: true, superscriptValue: '40', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 36, symbol: 'Kr', name: 'Krypton-78', atomicWeight: '77.920', abundance: 0.35, color: 0xb0e0e6, superscript: true, superscriptValue: '78', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 36, symbol: 'Kr', name: 'Krypton-80', atomicWeight: '79.916', abundance: 2.25, color: 0xb0e0e6, superscript: true, superscriptValue: '80', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 36, symbol: 'Kr', name: 'Krypton-82', atomicWeight: '81.913', abundance: 11.6, color: 0xb0e0e6, superscript: true, superscriptValue: '82', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 36, symbol: 'Kr', name: 'Krypton-83', atomicWeight: '82.914', abundance: 11.5, color: 0xb0e0e6, superscript: true, superscriptValue: '83', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 36, symbol: 'Kr', name: 'Krypton-84', atomicWeight: '83.911', abundance: 57.0, color: 0xb0e0e6, superscript: true, superscriptValue: '84', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 36, symbol: 'Kr', name: 'Krypton-86', atomicWeight: '85.910', abundance: 17.3, color: 0xb0e0e6, superscript: true, superscriptValue: '86', symbolLength: 2, superscriptLength: 2 },
+            { atomicNumber: 54, symbol: 'Xe', name: 'Xenon-124', atomicWeight: '123.905', abundance: 0.095, color: 0x9370db, superscript: true, superscriptValue: '124', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 54, symbol: 'Xe', name: 'Xenon-126', atomicWeight: '125.904', abundance: 0.089, color: 0x9370db, superscript: true, superscriptValue: '126', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 54, symbol: 'Xe', name: 'Xenon-128', atomicWeight: '127.904', abundance: 1.92, color: 0x9370db, superscript: true, superscriptValue: '128', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 54, symbol: 'Xe', name: 'Xenon-129', atomicWeight: '128.905', abundance: 26.4, color: 0x9370db, superscript: true, superscriptValue: '129', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 54, symbol: 'Xe', name: 'Xenon-130', atomicWeight: '129.904', abundance: 4.08, color: 0x9370db, superscript: true, superscriptValue: '130', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 54, symbol: 'Xe', name: 'Xenon-131', atomicWeight: '130.905', abundance: 21.2, color: 0x9370db, superscript: true, superscriptValue: '131', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 54, symbol: 'Xe', name: 'Xenon-132', atomicWeight: '131.904', abundance: 26.9, color: 0x9370db, superscript: true, superscriptValue: '132', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 54, symbol: 'Xe', name: 'Xenon-134', atomicWeight: '133.905', abundance: 10.4, color: 0x9370db, superscript: true, superscriptValue: '134', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 54, symbol: 'Xe', name: 'Xenon-136', atomicWeight: '135.907', abundance: 8.9, color: 0x9370db, superscript: true, superscriptValue: '136', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 86, symbol: 'Rn', name: 'Radon-222', atomicWeight: '222.017', abundance: 0.00000000001, color: 0x6A040F, superscript: true, superscriptValue: '222', symbolLength: 2, superscriptLength: 3 },
+            { atomicNumber: 118, symbol: 'Og', name: 'Oganesson-294', atomicWeight: '[294]', abundance: 0.00000000001, color: 0x8b0000, superscript: true, superscriptValue: '294', symbolLength: 2, superscriptLength: 3 }
+	  
+        ];
+
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.5, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+////
+// Create a canvas element for the OrientationGizmo
+const gizmoCanvas = document.createElement("canvas");
+gizmoCanvas.width = 120;
+gizmoCanvas.height = 120;
+gizmoCanvas.style.position = "absolute";
+gizmoCanvas.style.top = "10px";
+gizmoCanvas.style.right = "10px";
+gizmoCanvas.style.zIndex = "1000";
+document.body.appendChild(gizmoCanvas);
+
+// Gizmo implementation adapted to your needs
+class OrientationGizmo {
+    constructor(camera) {
+        this.camera = camera;
+        this.canvas = gizmoCanvas;
+        this.context = gizmoCanvas.getContext("2d");
+        this.size = this.canvas.width / 2;
+        this.center = { x: this.size, y: this.size };
+        this.axes = [
+        { axis: "X", gradient: ["#FF7F7F", "#FF0000"], direction: new THREE.Vector3(1, 0, 0) },
+            { axis: "Y", gradient: ["#7FFF7F", "#00FF00"], direction: new THREE.Vector3(0, 1, 0) },
+            { axis: "Z", gradient: ["#7F7FFF", "#0000FF"], direction: new THREE.Vector3(0, 0, 1) }
+       ];
+    }
+
+    update() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        const rotationMatrix = new THREE.Matrix4().makeRotationFromQuaternion(this.camera.quaternion);
+        const inverseRotation = rotationMatrix.clone().invert();
+
+        this.axes.forEach(axis => {
+            const direction = axis.direction.clone().applyMatrix4(inverseRotation).normalize();
+            const position = {
+                x: this.center.x + direction.x * this.size * 0.8,
+                y: this.center.y - direction.y * this.size * 0.8
+            };
+
+            this.drawLineWithGradient(this.center, position, axis.gradient);
+            this.drawLabel(position, axis.axis, axis.gradient[1]);
+       });
+    }
+
+    drawLineWithGradient(start, end, gradientColors) {
+        const gradient = this.context.createLinearGradient(start.x, start.y, end.x, end.y);
+        gradient.addColorStop(0, gradientColors[0]);
+        gradient.addColorStop(1, gradientColors[1]);
+
+        this.context.beginPath();
+        this.context.moveTo(start.x, start.y);
+        this.context.lineTo(end.x, end.y);
+        this.context.strokeStyle = gradient;
+        this.context.lineWidth = 2;
+        this.context.stroke();
+    }
+
+    drawLabel(position, label, color) {
+        this.context.font = "bold 12px Arial";
+        this.context.fillStyle = color;
+        this.context.textAlign = "center";
+        this.context.fillText(label, position.x, position.y + 4);
+    }
+
+
+
+    setupClickListener() {
+        this.canvas.addEventListener("click", (event) => {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            let clickedAxis = null;
+
+            this.axes.forEach(axis => {
+                const { x: ax, y: ay } = axis.screenPosition;
+                const distance = Math.sqrt((x - ax) ** 2 + (y - ay) ** 2);
+
+                if (distance < 15) { // Increase click tolerance
+                    clickedAxis = axis.axis;
+                }
+            });
+
+            if (clickedAxis) {
+                console.log(`Axis clicked: ${clickedAxis}`);
+                this.moveCamera(clickedAxis);
+            }
+        });
+    }
+
+    moveCamera(axis) {
+        if (axis === "X") {
+            this.camera.position.x += 1;
+        } else if (axis === "Y") {
+            this.camera.position.y += 1;
+        } else if (axis === "Z") {
+            this.camera.position.z += 1;
+        }
+        controls.update();
+    }
+
+
+
+
+
+}
+
+// Initialize the gizmo
+const orientationGizmo = new OrientationGizmo(camera);
+////
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        directionalLight.position.set(5, 5, 5).normalize();
+        scene.add(directionalLight);
+
+        // Camera position
+        camera.position.set(6, 3, 25);
+        camera.lookAt(scene.position);
+
+        // Orbit Controls for mouse interaction
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.screenSpacePanning = true;
+        controls.minDistance = -1;
+        controls.maxDistance = 230;
+        controls.zoomSpeed = 1.5; // Adjust zoom sensitivity
+        
+
+
+        // Main cube for Hydrogen
+        const mainGeometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+        const mainMaterial = new THREE.MeshPhongMaterial({ color: 0x808080, transparent: true, opacity: 0.3, shininess: 10, depthTest: true, depthWrite: false, blending: THREE.AdditiveBlending }); // 50% transparent
+        const mainCube = new THREE.Mesh(mainGeometry, mainMaterial);
+        mainCube.renderOrder = 1;
+        scene.add(mainCube);
+
+        // Adding a transparent inner plane at the mid-depth of the outer cube
+        const planeGeometry = new THREE.PlaneGeometry(1, 1);
+        const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.1, side: THREE.DoubleSide });
+        const innerPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+        innerPlane.position.set(0, 0, -0.08);
+        innerPlane.renderOrder = 0;
+        scene.add(innerPlane);
+
+        // Adding text labels for atomic number, name, and weight
+        const loader = new THREE.FontLoader();
+        loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+            const textMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            
+            // Atomic Number
+            const atomicNumberGeometry = new THREE.TextGeometry('1', {
+                font: font,
+                size: 0.15,
+                height: 0.01, depth: 0
+            });
+            const atomicNumberMesh = new THREE.Mesh(atomicNumberGeometry, textMaterial);
+            atomicNumberMesh.position.set(-0.55, 0.35, -0.05);
+            atomicNumberMesh.renderOrder = 1;
+            scene.add(atomicNumberMesh);
+
+            // Element Name
+            const elementNameGeometry = new THREE.TextGeometry('Hydrogen', {
+                font: font,
+                size: 0.07,
+                height: 0.01
+            });
+            const elementNameMesh = new THREE.Mesh(elementNameGeometry, textMaterial);
+            elementNameMesh.position.set(-0.5, -0.4, -0.05);
+            elementNameMesh.renderOrder = 1;
+            scene.add(elementNameMesh);
+
+            // Atomic Weight
+            const atomicWeightGeometry = new THREE.TextGeometry('1.008', {
+                font: font,
+                size: 0.07,
+                height: 0.01
+            });
+            const atomicWeightMesh = new THREE.Mesh(atomicWeightGeometry, textMaterial);
+            atomicWeightMesh.position.set(-0.5, -0.55, -0.05);
+            atomicWeightMesh.renderOrder = 1;
+            scene.add(atomicWeightMesh);
+        });
+
+        // Function to create smaller cubes to form an 'H'
+        function addSmallCube(x, y, z, sizeX, sizeY, sizeZ) {
+            const smallGeometry = new THREE.BoxGeometry(sizeX, sizeY, sizeZ);
+            const smallMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, transparent: true, opacity: 0.9, shininess: 100, depthTest: true, depthWrite: false, blending: THREE.AdditiveBlending });
+            const smallCube = new THREE.Mesh(smallGeometry, smallMaterial);
+            smallCube.position.set(x, y, z);
+            smallCube.renderOrder = 0;
+            scene.add(smallCube);
+        }
+
+        // Adding smaller cubes to form an 'H'
+        const depth = 0.1;
+        // Vertical left line of 'H'
+        addSmallCube(-0.2, 0.1, 0, 0.08, 0.6, depth);
+        // Vertical right line of 'H'
+        addSmallCube(0.2, 0.1, 0, 0.08, 0.6, depth);
+        // Horizontal connector of 'H'
+        addSmallCube(0, 0.1, 0, 0.3, 0.08, depth);
+
+
+
+        // Function to create cubes with different formats based on properties
+        function createCube(element, position, index) {
+            const { atomicNumber, symbol, name, atomicWeight, abundance, color, superscript, superscriptValue, symbolLength, superscriptLength } = element;
+            let cubeGeometry, cubeMaterial;
+
+            
+            // Determine the cube format based on the element's properties
+            cubeGeometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+            cubeMaterial = new THREE.MeshPhongMaterial({ color: color, transparent: true, opacity: 0.3, shininess: 10, depthTest: true, depthWrite: false, blending: THREE.AdditiveBlending });
+            const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+            cube.position.set(position.x, position.y, position.z);
+            cube.renderOrder = 1;
+            scene.add(cube);
+
+            // Store the cube for referencing during camera animations
+            elements[index].cube = cube;
+
+            // Adding text labels for atomic number, symbol, name, and atomic weight
+            const loader = new THREE.FontLoader();
+            loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function (font) {
+                const textMaterial = new THREE.MeshPhongMaterial({ color: color, shininess: 100 });
+
+                // Main symbol
+                const superscriptsymbolOffsetX = superscriptLength === 0 ? -0.00 : superscriptLength === 1 ? -0.00 : superscriptLength === 2 ? -0.00 : superscriptLength === 3 ? -0.05 : superscriptLength === 4 ? -0.1 : -0.25;                
+                const symbolOffsetXsize = symbolLength === 2 ? -0.1 : symbolLength === 3 ? -0.15 : -0.00;   //just for 3 super and 3 symbol
+                const superscriptsymbolOffsetX2 = superscriptLength === 0 ? -0.00 : superscriptLength === 1 ? -0.00 : superscriptLength === 2 ? -0.00 : superscriptLength === 3 ? -0.05 : superscriptLength === 4 ? -0.1 : -0.25;                
+                const symbolOffsetX = symbolLength === 2 ? -0.35 : symbolLength === 3 ? -0.45 : -0.15;
+                const symbolSize = 0.5 + superscriptsymbolOffsetX + (symbolOffsetXsize / 2) + superscriptsymbolOffsetX2    // - (0.1 * (symbolLength - 1)); additional functionality if needed.
+                const symbolGeometry = new THREE.TextGeometry(symbol, {
+                    font: font,
+                    size: symbolSize,
+                    height: 0.15
+                });
+                const symbolMesh = new THREE.Mesh(symbolGeometry, textMaterial);
+                
+                symbolMesh.position.set(cube.position.x + symbolOffsetX - superscriptsymbolOffsetX - (0.5 * symbolOffsetXsize) - (2 * superscriptsymbolOffsetX2), cube.position.y - 0.225 - (0.1 * symbolOffsetXsize), cube.position.z - 0.05);
+                symbolMesh.renderOrder = 1;
+                scene.add(symbolMesh);
+                elements[index].symbolMesh = symbolMesh;
+
+
+                // Superscript number as smaller text
+                if (superscript) {
+                    const superscriptsymbolOffsetX = superscriptLength === 0 ? -0.00 : superscriptLength === 1 ? -0.00 : superscriptLength === 2 ? -0.00 : superscriptLength === 3 ? -0.1 : superscriptLength === 4 ? -0.1 : -0.25;                
+                    const superscriptGeometry = new THREE.TextGeometry(superscriptValue, {
+                        font: font,
+                        size: 0.18 + (0.4 * superscriptsymbolOffsetX), // 33% of the main symbol size
+                        height: 0.1 
+                    });
+                    const superscriptMesh = new THREE.Mesh(superscriptGeometry, textMaterial);
+                    const superscriptOffsetX = symbolLength === 2 ? -0.15 : symbolLength === 3 ? -0.05 : -0.15;
+                    const symbolOffsetXsize_3 = symbolLength === 2 ? -0.0 : symbolLength === 3 ? -0.1 : -0.00;   //just for 3 super and 3 symbol
+                    const superscriptsuperscriptOffsetX = superscriptLength === 1 ? -0.02 : superscriptLength === 2 ? -0.15 : superscriptLength === 3 ? -0.35 : superscriptLength === 4 ? -0.15 : -0.25;                
+                    superscriptMesh.position.set(symbolMesh.position.x + superscriptOffsetX + superscriptsuperscriptOffsetX - (0.5 * superscriptsymbolOffsetX) - (1.5 * superscriptsymbolOffsetX2) + symbolOffsetXsize_3, symbolMesh.position.y + 0.28 + (0.5 * superscriptsymbolOffsetX), symbolMesh.position.z);
+                    superscriptMesh.renderOrder = 1;
+                    scene.add(superscriptMesh);
+                    elements[index].superscriptMesh = superscriptMesh;
+                }
+
+                // Atomic Number
+                const numberGeometry = new THREE.TextGeometry(atomicNumber.toString(), {
+                    font: font,
+                    size: 0.15,
+                    height: 0.01
+                });
+                const numberMesh = new THREE.Mesh(numberGeometry, textMaterial);
+                numberMesh.position.set(cube.position.x - 0.55, cube.position.y + 0.35, cube.position.z - 0.05);
+                numberMesh.renderOrder = 1;
+                scene.add(numberMesh);
+                elements[index].numberMesh = numberMesh;
+
+                // Element Name
+                const nameGeometry = new THREE.TextGeometry(name, {
+                    font: font,
+                    size: 0.07,
+                    height: 0.01
+                });
+                const nameMesh = new THREE.Mesh(nameGeometry, textMaterial);
+                nameMesh.position.set(cube.position.x - 0.5, cube.position.y - 0.45, cube.position.z - 0.05);
+                nameMesh.renderOrder = 1;
+                scene.add(nameMesh);
+                elements[index].nameMesh = nameMesh;
+
+
+                // Atomic Weight
+                const weightGeometry = new THREE.TextGeometry(atomicWeight, {
+                    font: font,
+                    size: 0.07,
+                    height: 0.01
+                });
+                const weightMesh = new THREE.Mesh(weightGeometry, textMaterial);
+                weightMesh.position.set(cube.position.x - 0.5, cube.position.y - 0.55, cube.position.z - 0.05);
+                weightMesh.renderOrder = 1;
+                scene.add(weightMesh);
+                elements[index].weightMesh = weightMesh;
+            });
+        }
+
+
+        function flyToElement(index) {
+            const elementCube = elements[index]?.cube; // Ensure the cube exists
+
+            if (elementCube) {
+                const targetPosition = elementCube.position;
+
+                // Update camera position to face the element directly
+                camera.position.set(
+                    targetPosition.x,
+                    targetPosition.y,
+                    targetPosition.z + 2 // Slight offset along Z for face-on view
+                );
+
+                // Update the camera controls' target to the cube's position
+                controls.target.set(targetPosition.x, targetPosition.y, targetPosition.z);
+
+                // Ensure the controls are updated to reflect the new target
+                controls.update();
+            } 
+
+	    else {
+
+                // Update camera position to face the element directly
+                camera.position.set(
+                    0,
+                    0,
+                    0 + 2 // Slight offset along Z for face-on view
+                );
+
+                // Update the camera controls' target to the cube's position
+                controls.target.set(0, 0, 0);
+
+                // Ensure the controls are updated to reflect the new target
+                controls.update();
+            }
+
+
+
+        }
+        
+        // Adding cubes for each element with adjusted positioning for isotopes
+        const positions = [
+           // { x: 0, y: 0, z: 0 },
+            { x: 0, y: 0, z: 3 },
+            { x: 0, y: 0, z: 6 },
+            { x: 0, y: -3, z: 0 },
+            { x: 0, y: -3, z: 3 },
+            { x: 0, y: -6, z: 0 },
+            { x: 0, y: -9, z: 0 },
+            { x: 0, y: -9, z: 3 },
+            { x: 0, y: -12, z: 0 },
+            { x: 0, y: -12, z: 3 },
+            { x: 0, y: -15, z: 0 },
+            { x: 3, y: -15, z: 0 },
+            { x: 0, y: -18, z: 0 },
+            { x: 3, y: -3, z: 0 },
+            { x: 3, y: -3, z: 3 },
+            { x: 3, y: -3, z: 6 },
+            { x: 3, y: -6, z: 0 },
+            { x: 3, y: -6, z: 3 },
+            { x: 3, y: -6, z: 6 },
+            { x: 3, y: -9, z: 0 },
+            { x: 3, y: -9, z: 3 },
+            { x: 3, y: -9, z: 6 },
+            { x: 3, y: -9, z: 9 },
+            { x: 3, y: -9, z: 12 },
+            { x: 3, y: -9, z: 0 },
+            { x: 3, y: -12, z: 3 },
+            { x: 3, y: -12, z: 6 },
+            { x: 3, y: -12, z: 9 },
+            { x: 3, y: -12, z: 0 },
+            { x: 3, y: -18, z: 0 },
+            { x: 3, y: -18, z: 3 },
+            { x: 3, y: -18, z: 6 },
+            { x: 3, y: -18, z: 9 },
+            { x: 3, y: -18, z: 12 },
+            { x: 3, y: -18, z: 15 },
+            { x: 6, y: -9, z: 0 },
+            { x: 6, y: -12, z: 0 },
+            { x: 6, y: -15, z: 0 },
+            { x: 6, y: -15, z: 6 },
+            { x: 6, y: -18, z: 0 },
+            { x: 6, y: -18, z: 3 }, //Ac 228
+            { x: 9, y: -15, z: -6 },  //Cerium 136
+            { x: 9, y: -15, z: -3 },  //138
+            { x: 9, y: -15, z: 0 },    //140  - element quoted
+            { x: 9, y: -15, z: 3 },    //142
+            { x: 12, y: -15, z: 0 },  //Pr
+            { x: 15, y: -15, z: -6 },  //142
+            { x: 15, y: -15, z: -3 },  //143
+            { x: 15, y: -15, z: 0 },  //144
+            { x: 15, y: -15, z: 3 },  //145
+            { x: 15, y: -15, z: 6 },  //146
+            { x: 15, y: -15, z: 12 },  //148
+            { x: 15, y: -15, z: 15 },  //150
+            { x: 18, y: -15, z: 0 },  //Promethium
+            { x: 21, y: -15, z: -18 },  //Samarium-144
+            { x: 21, y: -15, z: -9 },  //Samarium-147
+            { x: 21, y: -15, z: -6 },  //Samarium-148
+            { x: 21, y: -15, z: -3 },  //Samarium-149
+            { x: 21, y: -15, z: 0 },  //Samarium-150  ee
+            { x: 21, y: -15, z: 6 },  //Samarium-152
+            { x: 21, y: -15, z: 12 },  //Samarium-154
+            { x: 24, y: -15, z: 0 },  //Europium-151
+            { x: 24, y: -15, z: 6 },  //Europium-153
+            { x: 27, y: -15, z: -15 },  //Gadolinium-152
+            { x: 27, y: -15, z: -12 },  //154
+            { x: 27, y: -15, z: -6 },   //155
+            { x: 27, y: -15, z: -3 },    //156
+            { x: 27, y: -15, z: 0 },    //157 ee
+            { x: 27, y: -15, z: 3 },   //158
+            { x: 27, y: -15, z: 9 },   //160
+            { x: 30, y: -15, z: 0 },    //terbium
+            { x: 33, y: -15, z: -12 },     //Dysprosium
+            { x: 33, y: -15, z: -6 },
+            { x: 33, y: -15, z: 0 },
+            { x: 33, y: -15, z: -3 },
+            { x: 33, y: -15, z: 0 },
+            { x: 33, y: -15, z: 3 },
+            { x: 33, y: -15, z: 6 },     //164
+            { x: 36, y: -15, z: 0 },   //Holmium
+            { x: 39, y: -15, z: -9 },  //ERbium
+            { x: 39, y: -15, z: -3 },   //Erbium
+            { x: 39, y: -15, z: -3 },
+            { x: 39, y: -15, z: 0 }, //ee 167
+            { x: 39, y: -15, z: 3 },
+            { x: 39, y: -15, z: 9 },
+            { x: 42, y: -15, z: 0 },   //Thulium
+            { x: 45, y: -15, z: -15 },   //Ytterbium
+            { x: 45, y: -15, z: -9 },  //170
+            { x: 45, y: -15, z: -6 },
+            { x: 45, y: -15, z: -3 },
+            { x: 45, y: -15, z: 0 },
+            { x: 45, y: -15, z: 3 },
+            { x: 45, y: -15, z: 9 },
+            { x: 48, y: -15, z: 0 },  //Lut
+            { x: 48, y: -15, z: 3 }, //lut 176
+            { x: 9, y: -18, z: 0 },  //Thorium 232
+            { x: 12, y: -18, z: 0 },  //Protactinium
+            { x: 15, y: -18, z: -12 },   //Ur
+            { x: 15, y: -18, z: -9 }, 
+            { x: 15, y: -18, z: 0 },    //Ur238
+            { x: 18, y: -18, z: 0 },   //Neptunium
+            { x: 21, y: -18, z: -12 },         //Plutonium 238
+            { x: 21, y: -18, z: -15 },
+            { x: 21, y: -18, z: -12 },
+            { x: 21, y: -18, z: 0 },  // 244   
+            { x: 24, y: -18, z: -6 },  //241  Americium
+            { x: 24, y: -18, z: 0 },  //243 
+            { x: 27, y: -18, z: 0 },   //curium
+            { x: 27, y: -18, z: 3 },
+            { x: 27, y: -18, z: 9 },       //curium 247
+            { x: 30, y: -18, z: 0 },       //247 Berkelium
+            { x: 30, y: -18, z: 6 },      //249
+            { x: 33, y: -18, z: -6 },    //californium 249
+            { x: 33, y: -18, z: 0 },
+            { x: 36, y: -18, z: 0 },     //Es 99
+            { x: 39, y: -18, z: 0 },    //Fermium
+            { x: 42, y: -18, z: 0 },   //mendelevium
+            { x: 45, y: -18, z: 0 },      //nobelium
+            { x: 48, y: -18, z: 0 },     //lawrencium 262     --- END OF ACTINIDES
+            { x: 51, y: -9, z: -9 },     //titanium
+            { x: 51, y: -9, z: -6 },
+            { x: 51, y: -9, z: -3 },
+            { x: 51, y: -9, z: 0 },
+            { x: 51, y: -9, z: 3 },
+            { x: 51, y: -12, z: -6 },  //zirco
+            { x: 51, y: -12, z: -9 },  //zirco on plane of abundance
+            { x: 51, y: -12, z: -6 },
+            { x: 51, y: -12, z: -3 },
+            { x: 51, y: -12, z: 0},
+            { x: 51, y: -15, z: -9 },   //hafnium  174
+            { x: 51, y: -15, z: 0 },  //176
+            { x: 51, y: -15, z: 3 },   //177
+            { x: 51, y: -15, z: 0 },     //178   abundance plane du
+            { x: 51, y: -15, z: 9 },    //179
+            { x: 51, y: -15, z: 12 },   //180
+            { x: 51, y: -18, z: 0 },    //Rutherfordium 267
+            { x: 54, y: -9, z: -3 },   // Vanadium
+            { x: 54, y: -9, z: 0 },   // Vana51  abundance plane
+            { x: 54, y: -12, z: 0 },     // Niobium93
+            { x: 54, y: -15, z: -3 },   //Tantalum 180
+            { x: 54, y: -15, z: 0 },   // Tantalum  181
+            { x: 54, y: -18, z: 0 },    //    Dubnium  - 268
+            { x: 57, y: -9, z: -6 },     //Chromium
+            { x: 57, y: -9, z: 0 },
+            { x: 57, y: -9, z: 3 },
+            { x: 57, y: -9, z: 6 },
+            { x: 57, y: -12, z: -6 },   //  Mol
+            { x: 57, y: -12, z: 0 },
+            { x: 57, y: -12, z: -3 },
+            { x: 57, y: -12, z: 0 },   // molybdenum  95.94 so iso 96
+            { x: 57, y: -12, z: 3 },
+            { x: 57, y: -12, z: 6 },
+            { x: 57, y: -12, z: 12 },
+            { x: 57, y: -15, z: 0 },  // Tungsten  
+            { x: 57, y: -15, z: -3 },
+            { x: 57, y: -15, z: 0 },     //  Plane
+            { x: 57, y: -15, z: -3 },   // W186
+            { x: 57, y: -18, z: 0 },    //Seaborgium - 271
+            { x: 60, y: -9, z: 0 },        //Manganese-55
+            { x: 60, y: -12, z: 0 },   // Technitium 98  --- probably something else around 98 for AW to
+            { x: 60, y: -15, z: -6 },   //Rhenium 185  
+            { x: 60, y: -15, z: 0 },   //Rhenium  187 plane of abundance
+            { x: 60, y: -18, z: 0 },     // Bohrium-270 
+            { x: 63, y: -9, z: 0 },     // Fe  56 on abundance 
+            { x: 63, y: -9, z: 3 },    // Fe57 
+            { x: 63, y: -9, z: 6 },    //58  There is more Iron Isotopes 
+            { x: 63, y: -12, z: 0 },   // Ruthenium 102   // There are othre  Ru 's'
+            { x: 63, y: -12, z: 6 },  //104
+            { x: 63, y: -15, z: 0 },    //osmium  192
+            { x: 63, y: -15, z: -6 },   // osmium 190
+            { x: 63, y: -18, z: 0 },    // Hassium-277
+            { x: 66, y: -9, z: 0 },   //Cobalt
+            { x: 66, y: -12, z: 0 }, // Rhodium 103
+            { x: 66, y: -15, z: -3 },    // Iridium 191
+            { x: 66, y: -15, z: 0 },     //193 
+            { x: 66, y: -18, z: 0 },   //Meitnerium 278 
+            { x: 69, y: -9, z: 0 },   // Nickel 58 0- abundance
+            { x: 69, y: -9, z: 6 },  // Nicketl 60
+            { x: 69, y: -9, z: 9 },   //61
+            { x: 69, y: -9, z: 12 },   //62
+            { x: 69, y: -9, z: 18 },  //64
+            { x: 69, y: -12, z: -12 },   // Palladium 102   abunda at 106
+            { x: 69, y: -12, z: -6 },
+            { x: 69, y: -12, z: -3 },
+            { x: 69, y: -12, z: 0 },  //Abund
+            { x: 69, y: -12, z: 6 },
+            { x: 69, y: -12, z: 12 },
+            { x: 69, y: -15, z: -12 },   //platium 190  abund 195
+            { x: 69, y: -15, z: -12 },  //192
+            { x: 69, y: -15, z: -6 },   //194
+            { x: 69, y: -15, z: -3 },   // 195abundance (missed alignment?)
+            { x: 69, y: -15, z: 0 },  // 196
+            { x: 69, y: -15, z: -6 },   //198
+            { x: 69, y: -18, z: 0 }, // Darmstadtium 281
+            { x: 72, y: -9, z: 0 },  // Cu 63
+            { x: 72, y: -9, z: 6 },  //Cu65
+            { x: 72, y: -12, z: 0 },       //Ag
+            { x: 72, y: -12, z: 6 },   //Ag 109
+            { x: 72, y: -15, z: 0 },   //Au 197
+            { x: 72, y: -18, z: 0 },    //Rg
+            { x: 75, y: -9, z: -6 },  //zinc 64
+            { x: 75, y: -9, z: 0 },  // zinc 66 abdn
+            { x: 75, y: -9, z: 3 },  //67
+            { x: 75, y: -9, z: 6 },  //68
+            { x: 75, y: -9, z: 12 }, //70
+            { x: 75, y: -12, z: -18 },   // Cadm 106 abdn 112
+            { x: 75, y: -12, z: -12 },
+            { x: 75, y: -12, z: -6 },  //110
+            { x: 75, y: -12, z: -3 },   //111
+            { x: 75, y: -12, z: 0 },  //112
+            { x: 75, y: -12, z: 3 },  //113
+            { x: 75, y: -12, z: 6 },  //114
+            { x: 75, y: -12, z: 12 },  //116
+            { x: 75, y: -15, z: -12 },    //Mercury 196
+            { x: 75, y: -15, z: -6 }, //198
+            { x: 75, y: -15, z: -3 },  //199
+            { x: 75, y: -15, z: 0 },  // Abudn 200 weigh 200.59
+            { x: 75, y: -15, z: 3 },
+            { x: 75, y: -15, z: 6 },
+            { x: 75, y: -15, z: 12 },
+            { x: 75, y: -18, z: -3 },   //Copernicium 286
+            { x: 78, y: -3, z: -3 },   //Boron 10
+            { x: 78, y: -3, z: 0 },     // Boron 11
+            { x: 78, y: -6, z: 0 },    //Aluminium 27
+            { x: 78, y: -9, z: 0 },   //Gallium 69
+            { x: 78, y: -9, z: 6 },   //Gallium 71
+            { x: 78, y: -12, z: -3 },    //Indium-113
+            { x: 78, y: -12, z: 0 },    //Indium 115
+            { x: 78, y: -15, z: -3 },    //Thallium 203
+            { x: 78, y: -15, z: 0 },    //Thallium 205
+            { x: 78, y: -18, z: 0 },    //Nihonium-284
+            { x: 81, y: -3, z: 0 },  // Crbon12
+            { x: 81, y: -3, z: 3 },    //Carbon13
+            { x: 81, y: -3, z: 6 },     //Carbon14
+            { x: 81, y: -6, z: 0 },    // Silicon-28
+            { x: 81, y: -6, z: 3 },
+            { x: 81, y: -6, z: 6 },
+            { x: 81, y: -9, z: -3 },    //Germanium  70 --73 is abdn
+            { x: 81, y: -9, z: -3},  //72
+            { x: 81, y: -9, z: 0 },   //73
+            { x: 81, y: -9, z: 3 },  //74
+            { x: 81, y: -9, z: 9 },   //76  
+            { x: 81, y: -12, z: -18 },   //112  abdn 118
+            { x: 81, y: -12, z: -12 },
+            { x: 81, y: -12, z: -9 },
+            { x: 81, y: -12, z: -6 },
+            { x: 81, y: -12, z: -3 },
+            { x: 81, y: -12, z: 0 },
+            { x: 81, y: -15, z: -9 },
+            { x: 81, y: -15, z: -3 },
+            { x: 81, y: -15, z: 0 },
+            { x: 81, y: -15, z: 3 },
+            { x: 81, y: -18, z: 0 },  //Flerovium 289
+            { x: 84, y: -3, z: 0 },   //Nitrogen 14
+            { x: 84, y: -3, z: 3 },  //15
+            { x: 84, y: -6, z: 0 },   //Phosphorus-31
+            { x: 84, y: -9, z: 0 },      //Arsen75   
+            { x: 84, y: -12, z: 0 },   //Antimony-121 abund
+            { x: 84, y: -12, z: 6 },    //123
+            { x: 84, y: -15, z: 0 },     //Bismuth209
+            { x: 84, y: -18, z: 0 },    //288
+            { x: 84, y: -18, z: 3 }, 
+            { x: 87, y: -3, z: 0 },     // o16
+            { x: 87, y: -3, z: 3 }, 
+            { x: 87, y: -3, z: 6 }, 
+            { x: 87, y: -6, z: 0 },   //S 32
+            { x: 87, y: -6, z: 3 },
+            { x: 87, y: -6, z: 6 },
+            { x: 87, y: -6, z: 12 },
+            { x: 87, y: -9, z: -18 },   //Selenium -- 74 abdn at 80--
+            { x: 87, y: -9, z: -12 },
+            { x: 87, y: -9, z: -9 },
+            { x: 87, y: -9, z: -6 },
+            { x: 87, y: -9, z: 0 },
+            { x: 87, y: -9, z: 6 },
+            { x: 87, y: -12, z: -21 },  //Tellerium-128 is abdfn. this is 120.
+            { x: 87, y: -12, z: -15 },
+            { x: 87, y: -12, z: -12 },
+            { x: 87, y: -12, z: -9 },
+            { x: 87, y: -12, z: -6 },
+            { x: 87, y: -12, z: 0 },
+            { x: 87, y: -12, z: 6 },
+            { x: 87, y: -12, z: 6 },
+            { x: 87, y: -15, z: 0 },    //Polonium 209
+            { x: 87, y: -15, z: 3 },
+            { x: 87, y: -18, z: 3 },  //liver
+            { x: 90, y: -3, z: 0 },
+            { x: 90, y: -6, z: 0 },           
+            { x: 90, y: -6, z: 3 },
+            { x: 90, y: -9, z: 0 },
+            { x: 90, y: -9, z: 3 },
+            { x: 90, y: -12, z: 0 },
+            { x: 90, y: -15, z: 0 },  //Astatin
+            { x: 90, y: -18, z: 0 },  // 117
+            { x: 93, y: 0, z: -3 },    //He3
+            { x: 93, y: 0, z: 0 },
+            { x: 93, y: -3, z: 0 },  // Ne
+            { x: 93, y: -3, z: 3 },
+            { x: 93, y: -3, z: 6 },
+            { x: 93, y: -6, z: -12 },  //argon
+            { x: 93, y: -6, z: -6 },    
+            { x: 93, y: -6, z: 0 },
+            { x: 93, y: -9, z: -18 },  //kr
+            { x: 93, y: -9, z: -12 },
+            { x: 93, y: -9, z: -6 },
+            { x: 93, y: -9, z: -3 },
+            { x: 93, y: -9, z: 0 },
+            { x: 93, y: -9, z: 3 },
+            { x: 93, y: -12, z: -21 },   // 124  - 131 is abdn
+            { x: 93, y: -12, z: -15 },
+            { x: 93, y: -12, z: -9 },
+            { x: 93, y: -12, z: -6 },
+            { x: 93, y: -12, z: -3 },
+            { x: 93, y: -12, z: 0 },
+            { x: 93, y: -12, z: 3 },
+            { x: 93, y: -12, z: 9 },
+            { x: 93, y: -12, z: 15 },
+            { x: 93, y: -15, z: 0 },   //radn
+            { x: 93, y: -18, z: 0 },   //ogan
+            { x: 0, y: 0, z: 1 }
+        ];
+
+
+
+        elements.forEach((element, index) => {
+            createCube(element, positions[index], index);
+        });
+
+        isAnimating = false; // Set the flag to indicate an animation is ongoing
+        // Toggle extended period for lanthanides and actinides
+        let extendedPeriod = false;
+        function toggleExtendedPeriod() {
+            if (isAnimating) return; // Prevent toggle if animation is in progress
+    isAnimating = true; // Set the flag to indicate an animation is ongoing
+
+            extendedPeriod = !extendedPeriod;
+
+
+            const timeline = gsap.timeline({
+                onComplete: function() {
+                    isAnimating = false; // Reset the flag after all animations complete
+                }
+            });
+
+            elements.forEach((element, index) => {
+                if (element.atomicNumber >= 57 && element.atomicNumber <= 71) { // Lanthanides
+                    const xOffset = extendedPeriod ? 0.5 : -0.5;
+                    const yOffset = extendedPeriod ? -8 : 8;
+                    const delay = extendedPeriod ? 0.1 : index * 0.02; // Conditional delay for extended period ON
+                    [element.cube, element.symbolMesh, element.superscriptMesh, element.numberMesh, element.nameMesh, element.weightMesh].forEach(mesh => {
+                        if (mesh) {
+                            
+                            
+                                timeline.to(mesh.position, {
+                                duration: 1,
+                                x: mesh.position.x + xOffset,
+                                y: mesh.position.y + yOffset,
+                                delay: delay,
+                                
+                            }, 0); // Add all animations to the timeline at the same start point (0) to keep them in sync
+                }
+                            });
+                        }
+
+            
+
+
+                if (element.atomicNumber >= 89 && element.atomicNumber <= 103) { // Actinides
+                    const xOffset = extendedPeriod ? 0.5 : -0.5;
+                    const yOffset = extendedPeriod ? -8 : 8;
+                    const delay = extendedPeriod ? 0.1 : index * 0.02; // Conditional delay for extended period ON
+                    [element.cube, element.symbolMesh, element.superscriptMesh, element.numberMesh, element.nameMesh, element.weightMesh].forEach(mesh => {
+                        if (mesh) {
+                            
+                            timeline.to(mesh.position, {
+                                duration: 0.5,
+                                x: mesh.position.x + xOffset,
+                                y: mesh.position.y + yOffset,
+                                delay: delay,
+                                
+                            }, 0); // Add all animations to the timeline at the same start point (0) to keep them in sync
+                                }
+
+                            });
+                }
+
+
+                if (element.atomicNumber === 2 || (element.atomicNumber >= 5 && element.atomicNumber <= 10) ||
+                    (element.atomicNumber >= 13 && element.atomicNumber <= 18) || (element.atomicNumber >= 22 && element.atomicNumber <= 36) ||
+                    (element.atomicNumber >= 40 && element.atomicNumber <= 54) || (element.atomicNumber >= 72 && element.atomicNumber <= 86) ||
+                    (element.atomicNumber >= 104 && element.atomicNumber <= 118)) {
+
+                    const xOffset = extendedPeriod ? -42 : 42;
+                    const yOffset = extendedPeriod ? 0 : 0;
+                    const delay = extendedPeriod ? index * 0.01 : 0.2; // Conditional delay for extended period OFF
+                    [element.cube, element.symbolMesh, element.superscriptMesh, element.numberMesh, element.nameMesh, element.weightMesh].forEach(mesh => {
+                        if (mesh) {
+
+                            timeline.to(mesh.position, {
+                                duration: 0.5,
+                                x: mesh.position.x + xOffset,
+                                y: mesh.position.y + yOffset,
+                                delay: delay,
+                                
+                            }, 0); // Add all animations to the timeline at the same start point (0) to keep them in sync
+                             }
+                            });
+                }
+                  
+            })
+        }    
+
+
+
+          
+
+             //}//isanimating
+        
+
+        // Render loop
+        function render() {
+            requestAnimationFrame(render);
+            controls.update();
+            orientationGizmo.update();
+            renderer.render(scene, camera);
+            
+        }
+        render();
+
+
+
+    </script>
+</body>
+</html>
